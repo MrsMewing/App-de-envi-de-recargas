@@ -4,7 +4,187 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>App de Recargas</title>
-  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+    }
+
+    header {
+      background-color: #0077cc;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    nav {
+      background-color: #005fa3;
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      padding: 0.75rem;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+
+    nav a:hover {
+      color: #ffdd57;
+    }
+
+    .main-content {
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .main-content h2 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .grid-options {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1rem;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .option-tile {
+      background-color: white;
+      border-radius: 8px;
+      padding: 1rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: transform 0.2s, background-color 0.2s;
+    }
+
+    .option-tile:hover {
+      transform: scale(1.05);
+      background-color: #e6f2ff;
+    }
+
+    .recharge-options {
+      display: none;
+      max-height: 350px;
+      overflow-y: auto;
+      padding-right: 0.5rem;
+    }
+
+    .recharge-options::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .recharge-options::-webkit-scrollbar-thumb {
+      background-color: #0077cc;
+      border-radius: 8px;
+    }
+
+    .recharge-tile h3 {
+      margin: 0;
+      font-size: 1.2rem;
+      color: #0077cc;
+    }
+
+    .recharge-tile p {
+      margin: 0.5rem 0 0;
+      font-size: 0.95rem;
+      color: #333;
+    }
+
+    /* MODAL */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: none;
+      background-color: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    .modal-content h3 {
+      margin-top: 0;
+      margin-bottom: 1rem;
+    }
+
+    .modal-content input {
+      width: 90%;
+      padding: 0.6rem;
+      margin-bottom: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    .company-list {
+      display: flex;
+      overflow-x: auto;
+      gap: 1rem;
+      padding: 0.5rem 0;
+      margin-bottom: 1rem;
+    }
+
+    .company-list::-webkit-scrollbar {
+        display: none;                /* Chrome, Safari, Opera */
+    }
+
+    .company-item {
+      flex: 0 0 auto;
+      padding: 0.5rem 1rem;
+      background-color: #e6e6e6;
+      border-radius: 20px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.2s;
+    }
+
+    .company-item:hover,
+    .company-item.selected {
+      background-color: #0077cc;
+      color: white;
+    }
+
+    .modal-buttons {
+      display: flex;
+      justify-content: space-around;
+      gap: 1rem;
+    }
+
+    .modal-buttons button {
+      padding: 0.6rem 1.2rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .confirm-btn {
+      background-color: #0077cc;
+      color: white;
+    }
+
+    .cancel-btn {
+      background-color: #ccc;
+    }
+  </style>
 </head>
 <body>
 
@@ -18,17 +198,118 @@
   </nav>
 
   <div class="main-content">
-    <h2>Selecciona una de las opciones:</h2>
+    <h2 id="main-title">Selecciona una de las opciones:</h2>
 
-    <div class="grid-options">
-      <div class="option-tile">Recargar Internet</div>
-      <div class="option-tile">Recargar Saldo</div>
-      <div class="option-tile">Recargar Todo Incluido</div>
-      <div class="option-tile">Recargar Digicel</div>
-      <div class="option-tile">Ver promociones</div>
-      <div class="option-tile">Soporte</div>
+    <div class="grid-options" id="main-options">
+      <div class="option-tile" onclick="mostrarRecargas('internet')">Internet</div>
+      <div class="option-tile">Saldo</div>
+      <div class="option-tile">Minutos</div>
+      <div class="option-tile">Todo incluido</div>
+      <div class="option-tile">Especiales</div>
+      <div class="option-tile">Mi Antenita</div>
+    </div>
+
+    <div class="grid-options recharge-options" id="recargas-claro">
+      <div class="option-tile recharge-tile" onclick="abrirModal('Q5 - 800MB')">
+        <h3>Q5</h3>
+        <p>1 día de internet de 800MB</p>
+      </div>
+      <div class="option-tile recharge-tile" onclick="abrirModal('Q10 - 1.5GB')">
+        <h3>Q10</h3>
+        <p>3 días de internet de 1.5GB</p>
+      </div>
+      <div class="option-tile recharge-tile" onclick="abrirModal('Q15 - 5 días')">
+        <h3>Q15</h3>
+        <p>5 días + redes ilimitadas</p>
+      </div>
+      <div class="option-tile recharge-tile" onclick="abrirModal('Q25 - 3GB + llamadas')">
+        <h3>Q25</h3>
+        <p>7 días con 3GB + llamadas</p>
+      </div>
+      <div class="option-tile recharge-tile" onclick="abrirModal('Q50 - 6GB')">
+        <h3>Q50</h3>
+        <p>15 días de internet 6GB</p>
+      </div>
+      <div class="option-tile recharge-tile" onclick="abrirModal('Q100 - Ilimitado')">
+        <h3>Q100</h3>
+        <p>30 días navegación ilimitada</p>
+      </div>
+      <div class="option-tile recharge-tile" onclick="abrirModal('Q100 - Ilimitado')">
+        <h3>Q100</h3>
+        <p>30 días navegación ilimitada</p>
+      </div>
+      <div class="option-tile recharge-tile" onclick="abrirModal('Q100 - Ilimitado')">
+        <h3>Q100</h3>
+        <p>30 días navegación ilimitada</p>
+      </div>
+      <div class="option-tile recharge-tile" onclick="abrirModal('Q100 - Ilimitado')">
+        <h3>Q100</h3>
+        <p>30 días navegación ilimitada</p>
+      </div>
+      <div class="option-tile recharge-tile" onclick="abrirModal('Q100 - Ilimitado')">
+        <h3>Q100</h3>
+        <p>30 días navegación ilimitada</p>
+      </div>
     </div>
   </div>
+
+  <!-- Modal -->
+  <div class="modal" id="modal-recarga">
+    <div class="modal-content">
+      <h3 id="modal-title">Recarga seleccionada</h3>
+      <input type="number" placeholder="Número de teléfono" id="numeroInput" required>
+
+      <div class="company-list" id="company-list">
+        <div class="company-item" onclick="seleccionarCompania(this)">Claro</div>
+        <div class="company-item" onclick="seleccionarCompania(this)">Tigo</div>
+        <div class="company-item" onclick="seleccionarCompania(this)">Movistar</div>
+        <div class="company-item" onclick="seleccionarCompania(this)">Digicel</div>
+        <div class="company-item" onclick="seleccionarCompania(this)">Otros</div>
+      </div>
+
+      <div class="modal-buttons">
+        <button class="confirm-btn" onclick="confirmarRecarga()">Confirmar</button>
+        <button class="cancel-btn" onclick="cerrarModal()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function mostrarRecargas(tipo_de_recarga) {
+      document.getElementById("main-options").style.display = "none";
+      document.getElementById("main-title").textContent = "Selecciona una recarga para " + tipo_de_recarga + ":";
+      if (tipo_de_recarga === "internet") {
+        document.getElementById("recargas-claro").style.display = "grid";
+      }
+    }
+
+    function abrirModal(infoRecarga) {
+      document.getElementById("modal-title").textContent = "Seleccionaste: " + infoRecarga;
+      document.getElementById("modal-recarga").style.display = "flex";
+    }
+
+    function cerrarModal() {
+      document.getElementById("modal-recarga").style.display = "none";
+      document.getElementById("numeroInput").value = "";
+      document.querySelectorAll(".company-item").forEach(item => item.classList.remove("selected"));
+    }
+
+    function seleccionarCompania(element) {
+      document.querySelectorAll(".company-item").forEach(item => item.classList.remove("selected"));
+      element.classList.add("selected");
+    }
+
+    function confirmarRecarga() {
+      const numero = document.getElementById("numeroInput").value;
+      const compania = document.querySelector(".company-item.selected");
+      if (!numero || !compania) {
+        alert("Por favor, introduce el número y selecciona una compañía.");
+        return;
+      }
+      alert(`Recarga enviada a ${numero} en ${compania.textContent}`);
+      cerrarModal();
+    }
+  </script>
 
 </body>
 </html>
