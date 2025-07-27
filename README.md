@@ -15,7 +15,7 @@
 
 🧩 Interfaz sencilla: Todo en un solo programa, sin complicaciones.
 
-[Texto con enlace](https://mrsmewing.github.io/App-de-envi-de-recargas/)
+[URL de pagina en funcionamiento (para pruebas y tests)](https://mrsmewing.github.io/App-de-envi-de-recargas/)
 
 ```js
 console.log("Hola mundo, listo para cambiar?");
