@@ -1,5 +1,18 @@
 import {obtener_opciones_compañia} from "./base_de_datos.js";
 
+const estado_inicio_sesion = localStorage.getItem("inicioSesion");
+
+if (!estado_inicio_sesion){
+    let codigo_cliente = prompt("Introduce tu PIN de recarga (ejemplo 2032, 2025 etc)");
+
+    while (!codigo_cliente) codigo_cliente = prompt("Por favor ingresa tu PIN de recarga");
+
+    alert("Gracias"); 
+
+    localStorage.setItem("pin_recargas", codigo_cliente);
+    localStorage.setItem("inicioSesion", true);
+}
+
 //recorre cada opcion y asignale una funcion para que se active cuando se presione la opcion
 Array.from(document.getElementsByClassName("grid-options")[0].children).forEach(element => {
 
@@ -87,18 +100,17 @@ function cerrarModal() {
 
 function confirmarRecarga() {
     const numero = document.getElementById("numeroInput").value;
+    const pin = localStorage.getItem("pin_recargas");
     const ussd = document.getElementById("USSD-CODE").innerText;
 
     if (!numero) {
     alert("Por favor, introduce el número");
     return;
     }
-    
-    const [codigoInicio, _ , codigoFinal] = ussd.split("--");
-    const codigo_completo = codigoInicio + numero + codigoFinal;
 
-    console.log(codigoInicio, codigoFinal)
+    const codigo_completo = ussd.replace("--PIN--", pin).replace("--TELEFONO--", numero);
 
+    console.log(codigo_completo);
     abrirAppConUSSD(codigo_completo);
 
     alert(`Recarga enviada a ${numero}`);
