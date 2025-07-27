@@ -16,6 +16,8 @@
 
 - 🧩 Interfaz sencilla: Todo en un solo programa, sin complicaciones.
 
+- 📈 Siempre en constante desarrollo para mejorar, añadir nuevas funciones y actualizar opciones
+
 [URL de pagina en funcionamiento (para pruebas y tests)](https://mrsmewing.github.io/App-de-envi-de-recargas/)
 
 ## Puedes clonar el repositorio para trabajar con el, modificarlo, mejorarlo o hacer lo que quieras (tienes que tener git instalado) 
