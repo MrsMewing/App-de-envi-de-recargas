@@ -20,6 +20,13 @@
 
 [URL de pagina en funcionamiento (para pruebas y tests)](https://mrsmewing.github.io/App-de-envi-de-recargas/)
 
+## Table of Contents
+- [Installation](#installation)
+- [Usage](#usage)
+- [Contributing](#contributing)
+- [License](#license)
+
 ## Puedes clonar el repositorio para trabajar con el, modificarlo, mejorarlo o hacer lo que quieras (tienes que tener git instalado) 
 ```js
 git clone https://github.com/MrsMewing/App-de-envi-de-recargas.git
+
