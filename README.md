@@ -2,7 +2,7 @@
 
 ## Puedes enviar recargas y personalizar precios todo en una misma app
 
-**Puedes enviar las recargas para diferentes compañias (por el momento solo tigo y claro) y confirmar antes de enviarlas**
+**Puedes enviar las recargas para diferentes compañias (por el momento solo tigo y claro), configurar precios (aun en desarrollo) y al enviar las recargas, se te abrira la app del telefono para confirmar la recarga y seleccionar la compañia**
 
 *🚀 Características Principales*
 
