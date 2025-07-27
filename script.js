@@ -63,7 +63,7 @@ function mostrar_menu_opciones(opciones, nombre_opcion){
         div_opcion.className = "option-tile recharge tile";
         div_opcion.innerHTML = `<h3>Q${opcion.precio}</h3><p>${opcion.descripcion}</p> <a href="#" style="display: none;">${opcion.ussd} </a>`;
         div_opcion.onclick = function (){
-            abrirModal(`${opcion.tipo} de Q${opcion.precio}`);
+            abrirModal(`${opcion.tipo} de Q${opcion.precio}`, opcion.ussd);
         }
 
         contenedor_recargas.appendChild(div_opcion)
@@ -72,8 +72,9 @@ function mostrar_menu_opciones(opciones, nombre_opcion){
     document.getElementById("menu-de-recargas").style.display = "grid";
 }
 
-function abrirModal(infoRecarga) {
+function abrirModal(infoRecarga, ussd) {
     document.getElementById("modal-title").textContent = "Seleccionaste: " + infoRecarga;
+    document.getElementById("USSD-CODE").textContent = ussd.trim();
     document.getElementById("modal-recarga").style.display = "flex";
 }
 
@@ -86,17 +87,30 @@ function cerrarModal() {
 
 function confirmarRecarga() {
     const numero = document.getElementById("numeroInput").value;
+    const ussd = document.getElementById("USSD-CODE").innerText;
 
     if (!numero) {
     alert("Por favor, introduce el número");
     return;
     }
+    
+    const [codigoInicio, _ , codigoFinal] = ussd.split("--");
+    const codigo_completo = codigoInicio + numero + codigoFinal;
+
+    console.log(codigoInicio, codigoFinal)
+
+    abrirAppConUSSD(codigo_completo);
+
     alert(`Recarga enviada a ${numero}`);
     cerrarModal();
 }
 
+function abrirAppConUSSD(codigoUSSDCompleto){
+    const uriCodificada = encodeURIComponent(codigoUSSDCompleto);
+    window.location.href = `tel:${uriCodificada}`;
+}
 
-document.getElementById("boton-confirmacion-de-recarga").addEventListener("click", () => {
+document.getElementById("boton-confirmacion-de-recarga").addEventListener("click", (event) => {
     confirmarRecarga();
 })
 
