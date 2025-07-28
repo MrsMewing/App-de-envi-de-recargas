@@ -2,6 +2,8 @@ import {obtener_opciones_compañia} from "./base_de_datos.js";
 
 const estado_inicio_sesion = localStorage.getItem("inicioSesion");
 
+let estado_usuario = ["main-options"];
+
 if (!estado_inicio_sesion){
     let codigo_cliente = prompt("Introduce tu PIN de recarga (ejemplo 2032, 2025 etc)");
 
@@ -24,6 +26,7 @@ Array.from(document.getElementsByClassName("grid-options")[0].children).forEach(
 
         const contenedor_opciones = document.getElementById("opciones-recargas");
         contenedor_opciones.innerHTML = "";
+        estado_usuario.push("opciones-recargas");
 
         const informacion_compañia = obtener_opciones_compañia(nombre_compañia);
 
@@ -32,6 +35,7 @@ Array.from(document.getElementsByClassName("grid-options")[0].children).forEach(
             mensaje.innerText = "No hay opciones disponibles \n404";
             contenedor_opciones.appendChild(mensaje);
             contenedor_opciones.style.display = "grid";
+
             return;
         }
 
@@ -53,7 +57,7 @@ Array.from(document.getElementsByClassName("grid-options")[0].children).forEach(
                     return;
                 }
 
-                mostrar_menu_opciones(opcion.recargas, opcion.nombre.trim());
+                mostrar_menu_opciones(opcion.recargas);
             }
 
             contenedor_opciones.appendChild(div_opcion);
@@ -65,11 +69,12 @@ Array.from(document.getElementsByClassName("grid-options")[0].children).forEach(
 
 });
 
-function mostrar_menu_opciones(opciones, nombre_opcion){
+function mostrar_menu_opciones(opciones){
     let contenedor_recargas = document.getElementById("menu-de-recargas");
     document.getElementById("opciones-recargas").style.display = "none";
 
     contenedor_recargas.innerHTML = "";
+    estado_usuario.push("menu-de-recargas");
 
     for(let opcion of opciones){
         let div_opcion = document.createElement("div");
@@ -128,4 +133,27 @@ document.getElementById("boton-confirmacion-de-recarga").addEventListener("click
 
 document.getElementById("boton-cerrar-modal").addEventListener("click", () => {
     cerrarModal();
+})
+
+function mostrar_seccion(id_seccion){
+    let secciones = Array.from(document.getElementsByClassName("grid-options"));
+
+    secciones.forEach((seccion) => {
+        seccion.style.display = "none";
+    })
+
+    document.getElementById(id_seccion).style.display = "grid";
+}
+
+document.getElementById("btn-retroceder").addEventListener("click", () => {
+
+    if(estado_usuario[estado_usuario.length - 1] != "main-options") estado_usuario.pop();
+
+    mostrar_seccion(estado_usuario[estado_usuario.length - 1]);
+})
+
+document.getElementById("seccion-de-recargas").addEventListener("click", () => {
+    mostrar_seccion("main-options", "Selecciona una de las opciones");
+
+    estado_usuario = ["main-options"]
 })
