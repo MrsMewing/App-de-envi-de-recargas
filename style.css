@@ -195,4 +195,14 @@ nav a:hover {
 .btn-retroceder:hover {
   background-color: #125ea2;  /* Color al pasar el mouse */
 }
-/* ...existing code... */
+
+.inputs-modal-2 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.inputs-modal-2 label {
+    white-space: nowrap;
+    font-size: 14px;
+}

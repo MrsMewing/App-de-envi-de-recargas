@@ -57,7 +57,7 @@ Array.from(document.getElementsByClassName("grid-options")[0].children).forEach(
                     return;
                 }
 
-                mostrar_menu_opciones(opcion.recargas);
+                mostrar_menu_opciones(opcion.nombre, opcion.recargas, nombre_compañia);
             }
 
             contenedor_opciones.appendChild(div_opcion);
@@ -69,7 +69,9 @@ Array.from(document.getElementsByClassName("grid-options")[0].children).forEach(
 
 });
 
-function mostrar_menu_opciones(opciones){
+function mostrar_menu_opciones(opcion, opciones, compañia){
+    document.getElementById("main-title").textContent = "Selecciona una opcion de " + opcion;
+
     let contenedor_recargas = document.getElementById("menu-de-recargas");
     document.getElementById("opciones-recargas").style.display = "none";
 
@@ -81,7 +83,7 @@ function mostrar_menu_opciones(opciones){
         div_opcion.className = "option-tile recharge tile";
         div_opcion.innerHTML = `<h3>Q${opcion.precio}</h3><p>${opcion.descripcion}</p> <a href="#" style="display: none;">${opcion.ussd} </a>`;
         div_opcion.onclick = function (){
-            abrirModal(`${opcion.tipo} de Q${opcion.precio}`, opcion.ussd);
+            abrirModal(`${opcion.tipo} de Q${opcion.precio}`, opcion.ussd, compañia);
         }
 
         contenedor_recargas.appendChild(div_opcion)
@@ -90,10 +92,20 @@ function mostrar_menu_opciones(opciones){
     document.getElementById("menu-de-recargas").style.display = "grid";
 }
 
-function abrirModal(infoRecarga, ussd) {
+function abrirModal(infoRecarga, ussd, compañia) {
     document.getElementById("modal-title").textContent = "Seleccionaste: " + infoRecarga;
     document.getElementById("USSD-CODE").textContent = ussd.trim();
+    document.getElementById("nombre_compañia").textContent = compañia.trim();
     document.getElementById("modal-recarga").style.display = "flex";
+
+    //añadir logica para mostrar el pin correcto, dependiendo la opcion que se marco
+    const pin = localStorage.getItem(`pin_recargas_${compañia}`);
+
+    //verifica si existe en el almacenamiento local esta algun pin
+    if(pin) {
+        document.getElementById("input-pin-recarga").value = pin;
+        document.getElementById("checkbox-recordar-pin").checked = true;
+    }
 }
 
 function cerrarModal() {
@@ -103,22 +115,41 @@ function cerrarModal() {
 }
 
 
+/*
+cuando se presione el boton de enviar recarga valido lo siguiente
+1) Que los inputs esten con algun valor,
+*/
 function confirmarRecarga() {
-    const numero = document.getElementById("numeroInput").value;
+    const input_numero = document.getElementById("numeroInput");
+    const input_pin = document.getElementById("input-pin-recarga");
+    const input_checkbox = document.getElementById("checkbox-recordar-pin");
     const pin = localStorage.getItem("pin_recargas");
-    const ussd = document.getElementById("USSD-CODE").innerText;
 
-    if (!numero) {
-    alert("Por favor, introduce el número");
-    return;
+    const ussd = document.getElementById("USSD-CODE").innerText;
+    const compañia = document.getElementById("nombre_compañia").innerText;
+
+    if (!input_numero.value) {
+        alert("Por favor, introduce el número");
+        return;
+    }
+    if(!input_pin.value){
+        alert("Por favor, introduce el PIN de recarga");
+        return;
     }
 
-    const codigo_completo = ussd.replace("--PIN--", pin).replace("--TELEFONO--", numero);
+    if(input_checkbox.checked){
+        localStorage.setItem(`pin_recargas_${compañia}`, input_pin.value);
+    } 
+    else {
+        localStorage.removeItem("pin_recargas");
+        input_pin.value = "";
+    }
 
-    console.log(codigo_completo);
+    const codigo_completo = ussd.replace("--PIN--", pin).replace("--TELEFONO--", input_numero.value);
+
     abrirAppConUSSD(codigo_completo);
 
-    alert(`Recarga enviada a ${numero}`);
+    alert(`Recarga enviada a ${input_numero.value}`);
     cerrarModal();
 }
 
