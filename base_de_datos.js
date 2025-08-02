@@ -143,56 +143,56 @@ let recargas = [
                         tipo: "internet",
                         precio: "8",
                         descripcion: "1 día de internet de 500MB",
-                        ussd: "*905*2*1*--TELEFONO--*2024*1#"
+                        ussd: "*905*2*1*--TELEFONO--*--PIN--*1#"
                     },
                     {
                         compañia: "claro",
                         tipo: "internet",
                         precio: "13",
                         descripcion: "2 días de internet de 1.2GB y whatsApp y facebook",
-                        ussd: "*905*2*2*--TELEFONO--*2024*1#"
+                        ussd: "*905*2*2*--TELEFONO--*--PIN--*1#"
                     },
                     {
                         compañia: "claro",
                         tipo: "internet",
                         precio: "19",
                         descripcion: "3 días de internet de 2.2GB más todas las redes sociales",
-                        ussd: "*905*2*3*--TELEFONO--*2024*1#"
+                        ussd: "*905*2*3*--TELEFONO--*--PIN--*1#"
                     },
                     {
                         compañia: "claro",
                         tipo: "internet",
                         precio: "13",
                         descripcion: "1 día de internet de 3GB y whatsApp y facebook",
-                        ussd: "*905*2*4*--TELEFONO--*2024*1#"
+                        ussd: "*905*2*4*--TELEFONO--*--PIN--*1#"
                     },
                     {
                         compañia: "claro",
                         tipo: "internet",
                         precio: "36",
                         descripcion: "7 días de internet de 6GB más todas las redes sociales",
-                        ussd: "*905*2*5*--TELEFONO--*2024*1#"
+                        ussd: "*905*2*5*--TELEFONO--*--PIN--*1#"
                     },
                     {
                         compañia: "claro",
                         tipo: "internet",
                         precio: "60",
                         descripcion: "15 días de internet de 8GB más todas las redes sociales",
-                        ussd: "*905*2*6*--TELEFONO--*2024*1#"
+                        ussd: "*905*2*6*--TELEFONO--*--PIN--*1#"
                     },
                     {
                         compañia: "claro",
                         tipo: "internet",
                         precio: "115",
                         descripcion: "30 días de internet de 15GB más todas las redes sociales",
-                        ussd: "*905*2*7*--TELEFONO--*2024*1#"
+                        ussd: "*905*2*7*--TELEFONO--*--PIN--*1#"
                     },
                     {
                         compañia: "claro",
                         tipo: "internet",
                         precio: "8",
                         descripcion: "noches de internet ilimitado 10pm a 6am",
-                        ussd: "*905*2*8*--TELEFONO--*2024*1#"
+                        ussd: "*905*2*8*--TELEFONO--*--PIN--*1#"
                     },
                 ]
             }, 
@@ -204,35 +204,35 @@ let recargas = [
                         tipo: "minutos y mensajes",
                         precio: "8",
                         descripcion: "1 dia de 50 minutos y 50 sms nac. / USA",
-                        ussd: "*905*3*1*--TELEFONO--*2024*1#"
+                        ussd: "*905*3*1*--TELEFONO--*--PIN--*1#"
                     },
                     {
                         compañia: "claro",
                         tipo: "minutos y mensajes",
                         precio: "13",
                         descripcion: "2 dias de 120 minutos y 120 sms nac. / USA",
-                        ussd: "*905*3*2*--TELEFONO--*2024*1#"
+                        ussd: "*905*3*2*--TELEFONO--*--PIN--*1#"
                     },
                     {
                         compañia: "claro",
                         tipo: "minutos y mensajes",
                         precio: "19",
                         descripcion: "3 dias de 180 minutos y 180 sms nac. / USA",
-                        ussd: "*905*3*3*--TELEFONO--*2024*1#"
+                        ussd: "*905*3*3*--TELEFONO--*--PIN--*1#"
                     },
                     {
                         compañia: "claro",
                         tipo: "minutos y mensajes",
                         precio: "26",
                         descripcion: "7 dias de 225 minutos y 225 sms nac. / USA",
-                        ussd: "*905*3*4*--TELEFONO--*2024*1#"
+                        ussd: "*905*3*4*--TELEFONO--*--PIN--*1#"
                     },
                     {
                         compañia: "claro",
                         tipo: "minutos y mensajes",
                         precio: "50",
                         descripcion: "15 dias de 600 minutos y 600 sms nac. / USA",
-                        ussd: "*905*3*5*--TELEFONO--*2024*1#"
+                        ussd: "*905*3*5*--TELEFONO--*--PIN--*1#"
                     },
                 ]
             },
@@ -244,42 +244,42 @@ let recargas = [
                         tipo: "todo incluido",
                         precio: "13",
                         descripcion: "1 dia Llamadas Nac./USA +  650 MB + whatsApp, Facebook y claro sports",
-                        ussd: "*905*4*1*--TELEFONO--*2024*1#"
+                        ussd: "*905*4*1*--TELEFONO--*--PIN--*1#"
                     },
                     {
                         compañia: "claro",
                         tipo: "todo incluido",
                         precio: "19",
                         descripcion: "2 dias Llamadas Nac./USA + 2 GB + todas las APPS y claro sports",
-                        ussd: "*905*4*2*--TELEFONO--*2024*1#"
+                        ussd: "*905*4*2*--TELEFONO--*--PIN--*1#"
                     },
                     {
                         compañia: "claro",
                         tipo: "todo incluido",
                         precio: "36",
                         descripcion: "7 dias Llamadas Nac./USA +  5 GB + todas las Apps + claro sports y music",
-                        ussd: "*905*4*3*--TELEFONO--*2024*1#"
+                        ussd: "*905*4*3*--TELEFONO--*--PIN--*1#"
                     },
                     {
                         compañia: "claro",
                         tipo: "todo incluido",
                         precio: "60",
                         descripcion: "15 dias Llamadas Nac./USA +  7 GB + todas las Apps + claro sports y music",
-                        ussd: "*905*4*4*--TELEFONO--*2024*1#"
+                        ussd: "*905*4*4*--TELEFONO--*--PIN--*1#"
                     },
                     {
                         compañia: "claro",
                         tipo: "todo incluido",
                         precio: "115",
                         descripcion: "30 dias Llamadas Nac./USA +  12 GB + todas las Apps + claro sports y music",
-                        ussd: "*905*4*5*--TELEFONO--*2024*1#"
+                        ussd: "*905*4*5*--TELEFONO--*--PIN--*1#"
                     },
                     {
                         compañia: "claro",
                         tipo: "todo incluido",
                         precio: "20",
                         descripcion: "3 dias Llamadas Nac./USA +  2.5 GB + todas las Apps + claro sports y music",
-                        ussd: "*905*4*6*--TELEFONO--*2024*1#"
+                        ussd: "*905*4*6*--TELEFONO--*--PIN--*1#"
                     },
                 ]
             }

@@ -102,6 +102,7 @@ function abrirModal(infoRecarga, ussd, compañia) {
     const pin = localStorage.getItem(`pin_recargas_${compañia}`);
 
     //verifica si existe en el almacenamiento local esta algun pin
+    console.log(pin)
     if(pin) {
         document.getElementById("input-pin-recarga").value = pin;
         document.getElementById("checkbox-recordar-pin").checked = true;
@@ -123,7 +124,6 @@ function confirmarRecarga() {
     const input_numero = document.getElementById("numeroInput");
     const input_pin = document.getElementById("input-pin-recarga");
     const input_checkbox = document.getElementById("checkbox-recordar-pin");
-    const pin = localStorage.getItem("pin_recargas");
 
     const ussd = document.getElementById("USSD-CODE").innerText;
     const compañia = document.getElementById("nombre_compañia").innerText;
@@ -138,14 +138,14 @@ function confirmarRecarga() {
     }
 
     if(input_checkbox.checked){
-        localStorage.setItem(`pin_recargas_${compañia}`, input_pin.value);
+        localStorage.setItem(`pin_recargas_${compañia}`, String(input_pin.value));
     } 
     else {
         localStorage.removeItem("pin_recargas");
         input_pin.value = "";
     }
 
-    const codigo_completo = ussd.replace("--PIN--", pin).replace("--TELEFONO--", input_numero.value);
+    const codigo_completo = ussd.replace("--PIN--", input_pin.value).replace("--TELEFONO--", input_numero.value);
 
     abrirAppConUSSD(codigo_completo);
 
