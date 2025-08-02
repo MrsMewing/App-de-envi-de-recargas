@@ -5,13 +5,9 @@ const estado_inicio_sesion = localStorage.getItem("inicioSesion");
 let estado_usuario = ["main-options"];
 
 if (!estado_inicio_sesion){
-    let codigo_cliente = prompt("Introduce tu PIN de recarga (ejemplo 2032, 2025 etc)");
 
-    while (!codigo_cliente) codigo_cliente = prompt("Por favor ingresa tu PIN de recarga");
+    alert("Bienvenido a un mundo más organizado, tienes todo lo que necesitas aqui :)"); 
 
-    alert("Gracias"); 
-
-    localStorage.setItem("pin_recargas", codigo_cliente);
     localStorage.setItem("inicioSesion", true);
 }
 
