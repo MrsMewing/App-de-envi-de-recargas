@@ -282,10 +282,6 @@ let recargas = [
                         ussd: "*905*4*6*--TELEFONO--*2024*1#"
                     },
                 ]
-            },
-            {
-                nombre: "redes sociales", 
-                recargas: []
             }
         ]
     }

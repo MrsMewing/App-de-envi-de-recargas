@@ -178,22 +178,21 @@ nav a:hover {
     background-color: #ccc;
 }
 
-/* ...existing code... */
 .btn-retroceder {
-  margin: 10px 0 -30px 0;      /* Separación arriba y abajo */
-  padding: 10px 24px;         /* Espaciado interno */
-  background-color: #1976d2;  /* Color de fondo */
-  color: #fff;                /* Color de texto */
-  border: none;               /* Sin borde */
-  border-radius: 8px;         /* Bordes redondeados */
-  font-size: 1rem;            /* Tamaño de fuente */
-  cursor: pointer;            /* Cursor de mano */
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08); /* Sombra suave */
+  margin: 10px 0 -30px 0;      
+  padding: 10px 24px;         
+  background-color: #1976d2;  
+  color: #fff;                
+  border: none;               
+  border-radius: 8px;         
+  font-size: 1rem;            
+  cursor: pointer;            
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   transition: background 0.2s;
 }
 
 .btn-retroceder:hover {
-  background-color: #125ea2;  /* Color al pasar el mouse */
+  background-color: #125ea2;  
 }
 
 .inputs-modal-2 {
