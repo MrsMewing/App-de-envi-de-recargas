@@ -48,28 +48,51 @@
   <!-- Modal -->
   <div class="modal" id="modal-recarga">
     <div class="modal-content">
-      <h3 id="modal-title">Recarga seleccionada</h3>
-      <input type="number" placeholder="Número de teléfono" id="numeroInput" required>
+      <form action="#" id="formulario-envio-recarga">
+        <h3 id="modal-title">Recarga seleccionada</h3>
+        <input type="number" placeholder="Número de teléfono" id="numeroInput" required>
 
-      <div class="inputs-modal-2">
-        <input type="number" placeholder="Introduce tu PIN de recarga" id="input-pin-recarga" required>
+        <div class="inputs-modal-2">
+          <input type="number" placeholder="Introduce tu PIN de recarga" id="input-pin-recarga" required>
 
-        <label style="display: flex; gap: 10px;">
-          <input type="checkbox" id="checkbox-recordar-pin">
-          Recordar PIN
-        </label>
+          <label style="display: flex; gap: 10px;">
+            <input type="checkbox" id="checkbox-recordar-pin">
+            Recordar PIN
+          </label>
 
-      </div>
+        </div>
 
-      <a href="#" id="USSD-CODE" style="display: none;"></a>
-      <a href="#" id="nombre_compañia", style="display: none;"></a>
-      
-      <div class="modal-buttons">
-        <button class="confirm-btn" id="boton-confirmacion-de-recarga">Confirmar</button>
-        <button class="cancel-btn" id="boton-cerrar-modal">Cancelar</button>
-      </div>
+        <a href="#" id="USSD-CODE" style="display: none;"></a>
+        <a href="#" id="nombre_compañia", style="display: none;"></a>
+        
+        <div class="modal-buttons">
+          <button class="confirm-btn" id="boton-confirmacion-de-recarga">Confirmar</button>
+          <button class="cancel-btn" id="boton-cerrar-modal">Cancelar</button>
+        </div>
+      </form>
     </div>
   </div>
+
+  <div id="recargaModal-bg" class="recargaModal-bg">
+    <div class="recargaModal-container">
+      <h2 class="recargaModal-title">¿La recarga fue enviada?</h2>
+
+      <form action="#" id="recargaModal-form">
+        <label for="" class="recargaModal-option">
+          <input type="radio" name="estadoRecarga" value="enviada" required>
+          <span>Enviada</span>
+        </label>
+
+        <label for="" class="recargaModal-option">
+          <input type="radio" name="estadoRecarga" value="no-enviada" required>
+          <span>No enviada</span>
+        </label>
+
+        <button type="submit" class="recargaModal-btn">Enviar Respuesta</button>
+      </form>
+    </div>
+  </div>
+  
   <script type="module" src="script.js"></script>
 
   <script>

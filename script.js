@@ -98,7 +98,6 @@ function abrirModal(infoRecarga, ussd, compañia) {
     const pin = localStorage.getItem(`pin_recargas_${compañia}`);
 
     //verifica si existe en el almacenamiento local esta algun pin
-    console.log(pin)
     if(pin) {
         document.getElementById("input-pin-recarga").value = pin;
         document.getElementById("checkbox-recordar-pin").checked = true;
@@ -108,6 +107,7 @@ function abrirModal(infoRecarga, ussd, compañia) {
 function cerrarModal() {
     document.getElementById("modal-recarga").style.display = "none";
     document.getElementById("numeroInput").value = "";
+    document.getElementById("input-pin-recarga").value = "";
     document.querySelectorAll(".company-item").forEach(item => item.classList.remove("selected"));
 }
 
@@ -124,28 +124,19 @@ function confirmarRecarga() {
     const ussd = document.getElementById("USSD-CODE").innerText;
     const compañia = document.getElementById("nombre_compañia").innerText;
 
-    if (!input_numero.value) {
-        alert("Por favor, introduce el número");
-        return;
-    }
-    if(!input_pin.value){
-        alert("Por favor, introduce el PIN de recarga");
-        return;
-    }
-
     if(input_checkbox.checked){
         localStorage.setItem(`pin_recargas_${compañia}`, String(input_pin.value));
     } 
     else {
-        localStorage.removeItem("pin_recargas");
+        localStorage.removeItem(`pin_recargas_${compañia}`);
         input_pin.value = "";
     }
 
     const codigo_completo = ussd.replace("--PIN--", input_pin.value).replace("--TELEFONO--", input_numero.value);
 
     abrirAppConUSSD(codigo_completo);
-
-    alert(`Recarga enviada a ${input_numero.value}`);
+    
+    document.getElementById("recargaModal-bg").classList.add("activate");
     cerrarModal();
 }
 
@@ -154,7 +145,7 @@ function abrirAppConUSSD(codigoUSSDCompleto){
     window.location.href = `tel:${uriCodificada}`;
 }
 
-document.getElementById("boton-confirmacion-de-recarga").addEventListener("click", (event) => {
+document.getElementById("formulario-envio-recarga").addEventListener("submit", (event) => {
     confirmarRecarga();
 })
 
@@ -204,3 +195,58 @@ document.getElementById("seccion-de-historial").addEventListener("click", () => 
     contenido_historial.style.display = "block";
 
 })
+
+function crear_recordatorio_para_historial(numero_telefonico, compañia, informacion, precio, fecha, estado){
+    const cotenedor_historial = document.getElementsByClassName("history-list")[0];
+
+    const contenedor_principal = document.createElement("div");
+    contenedor_principal.setAttribute("class", "history-entry");
+
+    const informacion_recarga = document.createElement("div");
+    informacion_recarga.setAttribute("class", "entry-left");
+
+    const texto_numero = document.createElement("div");
+    texto_numero.setAttribute("class", "entry-phone");
+    texto_numero.appendChild(document.createTextNode(numero_telefonico));
+
+    const texto_compañia = document.createElement("div");
+    texto_compañia.setAttribute("class", "entry-company");
+    texto_compañia.appendChild(document.createTextNode(compañia));
+
+    const texto_informacion_recarga = document.createElement("div");
+    texto_informacion_recarga.setAttribute("class", "entry-type")
+    texto_informacion_recarga.appendChild(document.createTextNode(informacion));
+
+    informacion_recarga.appendChild(texto_numero);
+    informacion_recarga.appendChild(texto_compañia);
+    informacion_recarga.appendChild(texto_informacion_recarga);
+
+    const informacion_estado_recarga = document.createElement("div");
+    informacion_estado_recarga.setAttribute("class", "entry-right");
+
+    const texto_precio = document.createElement("div");
+    texto_precio.setAttribute("class", "entry-price");
+    texto_precio.appendChild(document.createTextNode(precio));
+
+    const texto_fecha_de_envio = document.createElement("div");
+    texto_fecha_de_envio.setAttribute("class", "entry-datetime");
+    texto_fecha_de_envio.appendChild(document.createTextNode(fecha));
+
+    const texto_estado_recarga = document.createElement("div");
+    const estado_recarga = estado.toLowerCase() == "enviada"? "sent" : "failed";
+    texto_estado_recarga.setAttribute("class", "entry-status " + estado_recarga);
+    texto_estado_recarga.appendChild(document.createTextNode(estado));
+    
+    informacion_estado_recarga.appendChild(texto_precio);
+    informacion_estado_recarga.appendChild(texto_fecha_de_envio);
+    informacion_estado_recarga.appendChild(texto_estado_recarga);
+
+    contenedor_principal.appendChild(informacion_recarga);
+    contenedor_principal.appendChild(informacion_estado_recarga);
+
+    cotenedor_historial.appendChild(contenedor_principal);
+}
+
+crear_recordatorio_para_historial("311191239", "Tigo", "Todo incluido -- 3 dias", "Q21", "12/09/2025 10:02", "Enviada");
+crear_recordatorio_para_historial("311191239", "Tigo", "Todo incluido -- 3 dias", "Q21", "12/09/2025 10:02", "No enviada");
+crear_recordatorio_para_historial("311191239", "Tigo", "Todo incluido -- 3 dias", "Q21", "12/09/2025 10:02", "Rechazada");
