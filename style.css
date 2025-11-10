@@ -205,3 +205,91 @@ nav a:hover {
     white-space: nowrap;
     font-size: 14px;
 }
+
+.contenido-del-historial {
+    display: none;
+    max-width: 800px;
+    margin: 1.5rem auto;
+    padding: 1rem;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    text-align: left;
+}
+
+.contenido-del-historial h2 {
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    color: #0077cc;
+}
+
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    
+    max-height: 350px;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
+.history-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.history-list::-webkit-scrollbar-thumb {
+    background-color: #0077cc;
+    border-radius: 8px;
+}
+
+.history-entry {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.6rem 0.8rem;
+    border-radius: 6px;
+    background: #fbfbfb;
+    border: 1px solid #eee;
+}
+
+.history-entry .entry-left {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.history-entry .entry-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+}
+
+.entry-phone {
+    font-weight: bold;
+}
+
+.entry-company, .entry-type, .entry-datetime {
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.entry-price {
+    font-weight: bold;
+    color: #222;
+}
+
+.entry-status {
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    color: white;
+}
+
+.entry-status.sent {
+    background: #28a745; /* verde */
+}
+
+.entry-status.failed {
+    background: #dc3545; /* rojo */
+}

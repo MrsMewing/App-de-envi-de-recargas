@@ -14,7 +14,7 @@
 
   <nav>
     <a href="#" id="seccion-de-recargas">Recargas</a>
-    <a href="#" id="secciond-de-historial">Historial</a>
+    <a href="#" id="seccion-de-historial">Historial</a>
   </nav>
 
   <div>
@@ -38,6 +38,11 @@
     
     <div class="grid-options recharge-options" id="menu-de-recargas"></div>
 
+  </div>
+
+  <div class="contenido-del-historial" id="seccion-historial">
+    <h2>Historial de recargas</h2>
+    <div class="history-list"></div>
   </div>
 
   <!-- Modal -->
@@ -66,11 +71,12 @@
     </div>
   </div>
   <script type="module" src="script.js"></script>
+
   <script>
     function seleccionarCompania(element) {
     document.querySelectorAll(".company-item").forEach(item => item.classList.remove("selected"));
     element.classList.add("selected");
-}
+  }
   </script>
 </body>
 </html>
