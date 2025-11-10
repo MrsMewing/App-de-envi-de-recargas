@@ -184,3 +184,23 @@ document.getElementById("seccion-de-recargas").addEventListener("click", () => {
 
     estado_usuario = ["main-options"]
 })
+
+document.getElementById("seccion-de-recargas").addEventListener("click", () => {
+    document.getElementById("seccion-historial").style.display = "none";
+
+    document.getElementById("btn-retroceder").style.display = "block";
+    document.getElementById("main-content").style.display = "block";
+});
+
+document.getElementById("seccion-de-historial").addEventListener("click", () => {
+    const boton_retroceder = document.getElementById("btn-retroceder");
+    const cotenido_principal = document.getElementById("main-content");
+
+    const contenido_historial = document.getElementById("seccion-historial");
+
+    boton_retroceder.style.display = "none";
+    cotenido_principal.style.display = "none";
+
+    contenido_historial.style.display = "block";
+
+})
