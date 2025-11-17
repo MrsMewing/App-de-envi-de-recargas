@@ -111,12 +111,7 @@ function cerrarModal() {
     document.querySelectorAll(".company-item").forEach(item => item.classList.remove("selected"));
 }
 
-
-/*
-cuando se presione el boton de enviar recarga valido lo siguiente
-1) Que los inputs esten con algun valor,
-*/
-function confirmarRecarga() {
+function valida_formulario_recarga() {
     const input_numero = document.getElementById("numeroInput");
     const input_pin = document.getElementById("input-pin-recarga");
     const input_checkbox = document.getElementById("checkbox-recordar-pin");
@@ -134,19 +129,20 @@ function confirmarRecarga() {
 
     const codigo_completo = ussd.replace("--PIN--", input_pin.value).replace("--TELEFONO--", input_numero.value);
 
-    abrirAppConUSSD(codigo_completo);
+    autocompletar_codigo_USSD(codigo_completo);
+
+    setTimeout(() => document.getElementById("recargaModal-bg").classList.add("activate"), 1500);
     
-    document.getElementById("recargaModal-bg").classList.add("activate");
     cerrarModal();
 }
 
-function abrirAppConUSSD(codigoUSSDCompleto){
+function autocompletar_codigo_USSD(codigoUSSDCompleto){
     const uriCodificada = encodeURIComponent(codigoUSSDCompleto);
     window.location.href = `tel:${uriCodificada}`;
 }
 
 document.getElementById("formulario-envio-recarga").addEventListener("submit", (event) => {
-    confirmarRecarga();
+    valida_formulario_recarga();
 })
 
 document.getElementById("boton-cerrar-modal").addEventListener("click", () => {
@@ -195,6 +191,22 @@ document.getElementById("seccion-de-historial").addEventListener("click", () => 
     contenido_historial.style.display = "block";
 
 })
+
+document.getElementById("recargaModal-form").addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const input_recarga_enviada = document.getElementById("input_recarga_enviada");
+    const input_recarga_no_enviada = document.getElementById("input_recarga_no_enviada");
+
+    if (input_recarga_enviada.checked) {crear_recordatorio_para_historial("311191239", "Tigo", "Todo incluido -- 3 dias", "Q21", "12/09/2025 10:02", "Enviada")}
+    else if (input_recarga_no_enviada.checked) {crear_recordatorio_para_historial("311191239", "Tigo", "Todo incluido -- 3 dias", "Q21", "12/09/2025 10:02", "Rechazada")}
+
+    //desactiva el modal de fomrulario cuando se envie la informacion 
+    input_recarga_enviada.checked = false;
+    input_recarga_no_enviada.checked = false;
+    
+    document.getElementById("recargaModal-bg").classList.remove("activate");
+});
 
 function crear_recordatorio_para_historial(numero_telefonico, compañia, informacion, precio, fecha, estado){
     const cotenedor_historial = document.getElementsByClassName("history-list")[0];
@@ -246,7 +258,3 @@ function crear_recordatorio_para_historial(numero_telefonico, compañia, informa
 
     cotenedor_historial.appendChild(contenedor_principal);
 }
-
-crear_recordatorio_para_historial("311191239", "Tigo", "Todo incluido -- 3 dias", "Q21", "12/09/2025 10:02", "Enviada");
-crear_recordatorio_para_historial("311191239", "Tigo", "Todo incluido -- 3 dias", "Q21", "12/09/2025 10:02", "No enviada");
-crear_recordatorio_para_historial("311191239", "Tigo", "Todo incluido -- 3 dias", "Q21", "12/09/2025 10:02", "Rechazada");
