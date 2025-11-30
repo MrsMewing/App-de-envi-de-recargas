@@ -3,6 +3,7 @@ import {obtener_opciones_compañia} from "./base_de_datos.js";
 const estado_inicio_sesion = localStorage.getItem("inicioSesion");
 
 let estado_usuario = ["main-options"];
+localStorage.setItem("informacion_de_recarga", JSON.stringify({numero: null, compañia: null, descripcion: null, precio: null, fecha: null}));
 
 if (!estado_inicio_sesion){
 
@@ -40,6 +41,11 @@ Array.from(document.getElementsByClassName("grid-options")[0].children).forEach(
             div_opcion.className = "option-tile recharge-tile";
             div_opcion.innerHTML = `<h3>Recarga ${nombre_compañia}</h3><p>${opcion.nombre}</p>`;
             div_opcion.onclick = function (){
+                
+                const informacion_de_recarga = localStorage.getItem("informacion_de_recarga")? JSON.parse(localStorage.getItem("informacion_de_recarga")) : {numero: null, compañia: null, descripcion: null, precio: null, fecha: null};
+                informacion_de_recarga.compañia = nombre_compañia;
+
+                localStorage.setItem("informacion_de_recarga", JSON.stringify(informacion_de_recarga));
 
                 if (opcion.recargas.length < 1) {
                     document.getElementById("opciones-recargas").style.display = "none";
@@ -74,11 +80,20 @@ function mostrar_menu_opciones(opcion, opciones, compañia){
     contenedor_recargas.innerHTML = "";
     estado_usuario.push("menu-de-recargas");
 
+    //crea todoas las opciones y agrega un evento que se activa si se selecciona una opcion
     for(let opcion of opciones){
         let div_opcion = document.createElement("div");
         div_opcion.className = "option-tile recharge tile";
         div_opcion.innerHTML = `<h3>Q${opcion.precio}</h3><p>${opcion.descripcion}</p> <a href="#" style="display: none;">${opcion.ussd} </a>`;
         div_opcion.onclick = function (){
+            //verifica si exista la info guardada y si no crea un nuevo objeto para trabajar con el 
+            const informacion_de_recarga = localStorage.getItem("informacion_de_recarga")? JSON.parse(localStorage.getItem("informacion_de_recarga")) : {numero: null, compañia: null, descripcion: null, precio: null, fecha: null};
+
+            informacion_de_recarga.descripcion = opcion.descripcion;
+            informacion_de_recarga.precio = opcion.precio;
+
+            localStorage.setItem("informacion_de_recarga", JSON.stringify(informacion_de_recarga));
+
             abrirModal(`${opcion.tipo} de Q${opcion.precio}`, opcion.ussd, compañia);
         }
 
@@ -128,6 +143,12 @@ function valida_formulario_recarga() {
     }
 
     const codigo_completo = ussd.replace("--PIN--", input_pin.value).replace("--TELEFONO--", input_numero.value);
+
+    const informacion_de_recarga = localStorage.getItem("informacion_de_recarga")? JSON.parse(localStorage.getItem("informacion_de_recarga")) : {numero: null, compañia: null, descripcion: null, precio: null, fecha: null};
+
+    informacion_de_recarga.numero = input_numero.value;
+
+    localStorage.setItem("informacion_de_recarga", JSON.stringify(informacion_de_recarga));
 
     autocompletar_codigo_USSD(codigo_completo);
 
@@ -192,14 +213,33 @@ document.getElementById("seccion-de-historial").addEventListener("click", () => 
 
 })
 
+function obtener_fecha_actual(){
+    const dias_semana = ["_", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado", "Domingo"];
+    const meses_año = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+
+    const objeto_fecha = new Date();
+    return `${dias_semana[objeto_fecha.getDay()]} ${objeto_fecha.getDate()} de ${meses_año[objeto_fecha.getMonth()]} del ${objeto_fecha.getFullYear()} ${objeto_fecha.getHours()}:${objeto_fecha.getMinutes()} horas`;
+}
+function guardar_datos_recarga(numero_cliente, compañia, descripcion, precio, fecha_de_envio, estado_recarga){
+    localStorage.setItem("recargas_enviadas", JSON.stringify({numero: numero_cliente, compañia: compañia, descripcion: descripcion, precio: precio ,fecha_de_envio: fecha_de_envio, estado_recarga: estado_recarga}));
+
+    crear_recordatorio_para_historial(numero_cliente, compañia, descripcion, precio, fecha_de_envio, estado_recarga);
+}
+
 document.getElementById("recargaModal-form").addEventListener("submit", (event) => {
     event.preventDefault();
 
     const input_recarga_enviada = document.getElementById("input_recarga_enviada");
     const input_recarga_no_enviada = document.getElementById("input_recarga_no_enviada");
 
-    if (input_recarga_enviada.checked) {crear_recordatorio_para_historial("311191239", "Tigo", "Todo incluido -- 3 dias", "Q21", "12/09/2025 10:02", "Enviada")}
-    else if (input_recarga_no_enviada.checked) {crear_recordatorio_para_historial("311191239", "Tigo", "Todo incluido -- 3 dias", "Q21", "12/09/2025 10:02", "Rechazada")}
+    if (input_recarga_enviada.checked) {
+        const informacion_de_recarga = JSON.parse(localStorage.getItem("informacion_de_recarga"));
+        guardar_datos_recarga(informacion_de_recarga.numero, informacion_de_recarga.compañia, informacion_de_recarga.descripcion, informacion_de_recarga.precio, obtener_fecha_actual(), "ENVIADA");
+    }
+    else if (input_recarga_no_enviada.checked) {
+        const informacion_de_recarga = JSON.parse(localStorage.getItem("informacion_de_recarga"));
+        guardar_datos_recarga(informacion_de_recarga.numero, informacion_de_recarga.compañia, informacion_de_recarga.descripcion, informacion_de_recarga.precio, obtener_fecha_actual(), "RECHAZADA");
+    }
 
     //desactiva el modal de fomrulario cuando se envie la informacion 
     input_recarga_enviada.checked = false;
@@ -214,31 +254,31 @@ function crear_recordatorio_para_historial(numero_telefonico, compañia, informa
     const contenedor_principal = document.createElement("div");
     contenedor_principal.setAttribute("class", "history-entry");
 
-    const informacion_recarga = document.createElement("div");
-    informacion_recarga.setAttribute("class", "entry-left");
+    const de = document.createElement("div");
+    de.setAttribute("class", "entry-left");
 
     const texto_numero = document.createElement("div");
     texto_numero.setAttribute("class", "entry-phone");
-    texto_numero.appendChild(document.createTextNode(numero_telefonico));
+    texto_numero.appendChild(document.createTextNode(`+502 ${numero_telefonico}`));
 
     const texto_compañia = document.createElement("div");
     texto_compañia.setAttribute("class", "entry-company");
-    texto_compañia.appendChild(document.createTextNode(compañia));
+    texto_compañia.appendChild(document.createTextNode(`COMPAÑIA ${compañia.toUpperCase()}`));
 
-    const texto_informacion_recarga = document.createElement("div");
-    texto_informacion_recarga.setAttribute("class", "entry-type")
-    texto_informacion_recarga.appendChild(document.createTextNode(informacion));
+    const texto_de = document.createElement("div");
+    texto_de.setAttribute("class", "entry-type")
+    texto_de.appendChild(document.createTextNode(informacion));
 
-    informacion_recarga.appendChild(texto_numero);
-    informacion_recarga.appendChild(texto_compañia);
-    informacion_recarga.appendChild(texto_informacion_recarga);
+    de.appendChild(texto_numero);
+    de.appendChild(texto_compañia);
+    de.appendChild(texto_de);
 
     const informacion_estado_recarga = document.createElement("div");
     informacion_estado_recarga.setAttribute("class", "entry-right");
 
     const texto_precio = document.createElement("div");
     texto_precio.setAttribute("class", "entry-price");
-    texto_precio.appendChild(document.createTextNode(precio));
+    texto_precio.appendChild(document.createTextNode(`PRECIO PAGADO Q${precio}`));
 
     const texto_fecha_de_envio = document.createElement("div");
     texto_fecha_de_envio.setAttribute("class", "entry-datetime");
@@ -253,7 +293,7 @@ function crear_recordatorio_para_historial(numero_telefonico, compañia, informa
     informacion_estado_recarga.appendChild(texto_fecha_de_envio);
     informacion_estado_recarga.appendChild(texto_estado_recarga);
 
-    contenedor_principal.appendChild(informacion_recarga);
+    contenedor_principal.appendChild(de);
     contenedor_principal.appendChild(informacion_estado_recarga);
 
     cotenedor_historial.appendChild(contenedor_principal);
