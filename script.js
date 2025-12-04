@@ -1,5 +1,5 @@
 import {obtener_opciones_compañia} from "./base_de_datos.js";
-import {} from "./historial_recargas.js";
+import {insertar_elementos_en_db, obtener_coleccion_completa_db} from "./funciones_de_historial_recargas.js";
 
 const estado_inicio_sesion = localStorage.getItem("inicioSesion");
 
@@ -191,7 +191,7 @@ document.getElementById("btn-retroceder").addEventListener("click", () => {
 document.getElementById("seccion-de-recargas").addEventListener("click", () => {
     mostrar_seccion("main-options", "Selecciona una de las opciones");
 
-    estado_usuario = ["main-options"]
+    estado_usuario = ["main-options"];
 })
 
 document.getElementById("seccion-de-recargas").addEventListener("click", () => {
@@ -202,6 +202,8 @@ document.getElementById("seccion-de-recargas").addEventListener("click", () => {
 });
 
 document.getElementById("seccion-de-historial").addEventListener("click", () => {
+    document.getElementsByClassName("history-list")[0].innerHTML = "";
+
     const boton_retroceder = document.getElementById("btn-retroceder");
     const cotenido_principal = document.getElementById("main-content");
 
@@ -212,6 +214,12 @@ document.getElementById("seccion-de-historial").addEventListener("click", () => 
 
     contenido_historial.style.display = "block";
 
+    obtener_coleccion_completa_db().then((informacion_db) => {
+        informacion_db.forEach((info_recarga) => {
+            crear_recordatorio_en_historial(info_recarga.numero, info_recarga.compañia, info_recarga.descripcion, info_recarga.precio, info_recarga.fecha_de_envio, info_recarga.estado_recarga);
+        });
+    });
+
 })
 
 function obtener_fecha_actual(){
@@ -221,35 +229,35 @@ function obtener_fecha_actual(){
     const objeto_fecha = new Date();
     return `${dias_semana[objeto_fecha.getDay()]} ${objeto_fecha.getDate()} de ${meses_año[objeto_fecha.getMonth()]} del ${objeto_fecha.getFullYear()} ${objeto_fecha.getHours()}:${objeto_fecha.getMinutes()} horas`;
 }
-function guardar_datos_recarga(numero_cliente, compañia, descripcion, precio, fecha_de_envio, estado_recarga){
-    localStorage.setItem("recargas_enviadas", JSON.stringify({numero: numero_cliente, compañia: compañia, descripcion: descripcion, precio: precio ,fecha_de_envio: fecha_de_envio, estado_recarga: estado_recarga}));
+async function guardar_datos_de_recarga(numero_cliente, compañia, descripcion, precio, fecha_de_envio, estado_recarga){
+    const resultado = await insertar_elementos_en_db({id: numero_cliente, numero: numero_cliente, compañia: compañia, descripcion: descripcion, precio: precio ,fecha_de_envio: fecha_de_envio, estado_recarga: estado_recarga});
 
-    crear_recordatorio_para_historial(numero_cliente, compañia, descripcion, precio, fecha_de_envio, estado_recarga);
+    if (resultado) crear_recordatorio_en_historial(numero_cliente, compañia, descripcion, precio, fecha_de_envio, estado_recarga);
 }
 
 document.getElementById("recargaModal-form").addEventListener("submit", (event) => {
     event.preventDefault();
 
-    const input_recarga_enviada = document.getElementById("input_recarga_enviada");
-    const input_recarga_no_enviada = document.getElementById("input_recarga_no_enviada");
+    const opcion_recarga_enviada = document.getElementById("input_recarga_enviada");
+    const opcion_recarga_no_enviada = document.getElementById("input_recarga_no_enviada");
 
-    if (input_recarga_enviada.checked) {
+    if (opcion_recarga_enviada.checked) {
         const informacion_de_recarga = JSON.parse(localStorage.getItem("informacion_de_recarga"));
-        guardar_datos_recarga(informacion_de_recarga.numero, informacion_de_recarga.compañia, informacion_de_recarga.descripcion, informacion_de_recarga.precio, obtener_fecha_actual(), "ENVIADA");
+        guardar_datos_de_recarga(informacion_de_recarga.numero, informacion_de_recarga.compañia, informacion_de_recarga.descripcion, informacion_de_recarga.precio, obtener_fecha_actual(), "ENVIADA");
     }
-    else if (input_recarga_no_enviada.checked) {
+    else if (opcion_recarga_no_enviada.checked) {
         const informacion_de_recarga = JSON.parse(localStorage.getItem("informacion_de_recarga"));
-        guardar_datos_recarga(informacion_de_recarga.numero, informacion_de_recarga.compañia, informacion_de_recarga.descripcion, informacion_de_recarga.precio, obtener_fecha_actual(), "RECHAZADA");
+        guardar_datos_de_recarga(informacion_de_recarga.numero, informacion_de_recarga.compañia, informacion_de_recarga.descripcion, informacion_de_recarga.precio, obtener_fecha_actual(), "RECHAZADA");
     }
 
     //desactiva el modal de fomrulario cuando se envie la informacion 
-    input_recarga_enviada.checked = false;
-    input_recarga_no_enviada.checked = false;
+    opcion_recarga_enviada.checked = false;
+    opcion_recarga_no_enviada.checked = false;
     
     document.getElementById("recargaModal-bg").classList.remove("activate");
 });
 
-function crear_recordatorio_para_historial(numero_telefonico, compañia, informacion, precio, fecha, estado){
+function crear_recordatorio_en_historial(numero_telefonico, compañia, informacion, precio, fecha, estado){
     const cotenedor_historial = document.getElementsByClassName("history-list")[0];
 
     const contenedor_principal = document.createElement("div");
