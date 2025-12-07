@@ -94,7 +94,7 @@ function mostrar_menu_opciones(opcion, opciones, compañia){
             informacion_de_recarga.precio = opcion.precio;
 
             localStorage.setItem("informacion_de_recarga", JSON.stringify(informacion_de_recarga));
-
+            
             abrirModal(`${opcion.tipo} de Q${opcion.precio}`, opcion.ussd, compañia);
         }
 
@@ -143,6 +143,8 @@ function valida_formulario_recarga() {
         input_pin.value = "";
     }
 
+    input_numero.value = "";
+
     const codigo_completo = ussd.replace("--PIN--", input_pin.value).replace("--TELEFONO--", input_numero.value);
 
     const informacion_de_recarga = localStorage.getItem("informacion_de_recarga")? JSON.parse(localStorage.getItem("informacion_de_recarga")) : {numero: null, compañia: null, descripcion: null, precio: null, fecha: null};
@@ -153,9 +155,26 @@ function valida_formulario_recarga() {
 
     autocompletar_codigo_USSD(codigo_completo);
 
-    setTimeout(() => document.getElementById("recargaModal-bg").classList.add("activate"), 1500);
-    
-    cerrarModal();
+    setTimeout(() => {
+        document.getElementById("recargaModal-bg").classList.add("activate");
+
+        setTimeout(() => {
+            const opcion_recarga_enviada = document.getElementById("input_recarga_enviada");
+            const opcion_recarga_no_enviada = document.getElementById("input_recarga_no_enviada");
+
+            //si alguno de los inputs fue seleccionado no hagas nada
+            if (opcion_recarga_enviada.checked || opcion_recarga_no_enviada.checked) return null;
+
+            //pero si no se selecciono nada despues de 10s, marca automaticamente la opcion por defecto
+            const informacion_de_recarga = JSON.parse(localStorage.getItem("informacion_de_recarga"));
+            guardar_datos_de_recarga(informacion_de_recarga.numero, informacion_de_recarga.compañia, informacion_de_recarga.descripcion, informacion_de_recarga.precio, obtener_fecha_actual(), "RECHAZADA");
+
+            //cerrar todos los modals y dejar la pantalla limpia
+            document.getElementById("recargaModal-bg").classList.remove("activate");
+            cerrarModal();
+        }, 8000);
+
+    }, 1500);
 }
 
 function autocompletar_codigo_USSD(codigoUSSDCompleto){
