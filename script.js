@@ -143,8 +143,6 @@ function valida_formulario_recarga() {
         input_pin.value = "";
     }
 
-    input_numero.value = "";
-
     const codigo_completo = ussd.replace("--PIN--", input_pin.value).replace("--TELEFONO--", input_numero.value);
 
     const informacion_de_recarga = localStorage.getItem("informacion_de_recarga")? JSON.parse(localStorage.getItem("informacion_de_recarga")) : {numero: null, compañia: null, descripcion: null, precio: null, fecha: null};
