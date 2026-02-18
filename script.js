@@ -13,6 +13,19 @@ if (!estado_inicio_sesion){
     localStorage.setItem("inicioSesion", true);
 }
 
+function updateFloatingButton(seccion) {
+    document.querySelectorAll('.floating').forEach(btn => btn.style.display = 'none');
+    if (seccion === 'main-options') {
+        document.getElementById('add-company').style.display = 'block';
+    } else if (seccion === 'opciones-recargas') {
+        document.getElementById('add-option').style.display = 'block';
+    } else if (seccion === 'menu-de-recargas') {
+        document.getElementById('add-recharge').style.display = 'block';
+    }
+}
+
+updateFloatingButton("main-options");
+
 //recorre cada opcion y asignale una funcion para que se active cuando se presione la opcion
 Array.from(document.getElementsByClassName("grid-options")[0].children).forEach(element => {
 
@@ -25,6 +38,8 @@ Array.from(document.getElementsByClassName("grid-options")[0].children).forEach(
         const contenedor_opciones = document.getElementById("opciones-recargas");
         contenedor_opciones.innerHTML = "";
         estado_usuario.push("opciones-recargas");
+
+        updateFloatingButton("opciones-recargas");
 
         const informacion_compañia = obtener_opciones_compañia(nombre_compañia);
 
@@ -80,6 +95,8 @@ function mostrar_menu_opciones(opcion, opciones, compañia){
 
     contenedor_recargas.innerHTML = "";
     estado_usuario.push("menu-de-recargas");
+
+    updateFloatingButton("menu-de-recargas");
 
     //crea todoas las opciones y agrega un evento que se activa si se selecciona una opcion
     for(let opcion of opciones){
@@ -203,12 +220,14 @@ document.getElementById("btn-retroceder").addEventListener("click", () => {
     if(estado_usuario[estado_usuario.length - 1] != "main-options") estado_usuario.pop();
 
     mostrar_seccion(estado_usuario[estado_usuario.length - 1]);
+    updateFloatingButton(estado_usuario[estado_usuario.length - 1]);
 })
 
 document.getElementById("seccion-de-recargas").addEventListener("click", () => {
     mostrar_seccion("main-options", "Selecciona una de las opciones");
 
     estado_usuario = ["main-options"];
+    updateFloatingButton("main-options");
 })
 
 document.getElementById("seccion-de-recargas").addEventListener("click", () => {
