@@ -1,4 +1,4 @@
-import {obtener_opciones_compañia} from "./base_de_datos.js";
+import {obtener_opciones_compañia, agregar_nueva_compañia} from "./base_de_datos.js";
 import {insertar_elementos_en_db, obtener_coleccion_completa_db} from "./funciones_de_historial_recargas.js";
 
 const estado_inicio_sesion = localStorage.getItem("inicioSesion");
@@ -25,7 +25,6 @@ function updateFloatingButton(seccion) {
 }
 
 updateFloatingButton("main-options");
-
 //recorre cada opcion y asignale una funcion para que se active cuando se presione la opcion
 Array.from(document.getElementsByClassName("grid-options")[0].children).forEach(element => {
 
