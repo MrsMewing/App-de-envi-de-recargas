@@ -63,41 +63,41 @@ export class BASE_DE_DATOS {
         }
     }
 
-    async agregar_nueva_opcion (nombre_de_compañia, nombre_de_opcion) {
+    async agregar_nueva_opcion (nombre_de_compañia_objetivo, nombre_de_nueva_opcion) {
         try {
-            const almacen_de_recargas = this.iniciar_transaccion(["recargas"], "recargas");
+            const registro_de_compañias_guardadas = this.iniciar_transaccion(["recargas"], "recargas");
 
-            const respuesta_de_solicitud = await this.procesar_solicitud_db(almacen_de_recargas.get(nombre_de_compañia));
+            const respuesta_de_obtencion_de_compañia = await this.procesar_solicitud_db(registro_de_compañias_guardadas.get(nombre_de_compañia_objetivo));
 
-            const informacion_de_compañia = respuesta_de_solicitud.target.result;
-            const estructura_de_opcion = {nombre: nombre_de_opcion, recargas: []};
+            const informacion_de_compañia = respuesta_de_obtencion_de_compañia.target.result;
+            const nueva_opcion = {nombre: nombre_de_nueva_opcion, recargas: []};
 
-            informacion_de_compañia.opciones.push(estructura_de_opcion);
+            informacion_de_compañia.opciones.push(nueva_opcion);
 
-            const respuesta_de_solicitud_de_actualizacion = await this.procesar_solicitud_db(almacen_de_recargas.put(informacion_de_compañia));
+            const respuesta_de_actualizacion_de_compañia = await this.procesar_solicitud_db(registro_de_compañias_guardadas.put(informacion_de_compañia));
 
-            return [respuesta_de_solicitud_de_actualizacion, null];
+            return [respuesta_de_actualizacion_de_compañia, null];
         }catch(error){
             return [null, error];
         }
     }
 
-    async agregar_nueva_recarga (nombre_de_compañia, indice_de_opcion, informacion_de_recarga) {
+    async agregar_nueva_recarga (nombre_de_compañia_objetivo, indice_de_opcion_objetivo, informacion_de_nueva_recarga) {
         try {
-            const almacen_de_recargas = this.iniciar_transaccion(["recargas"], "recargas");
+            const registro_de_compañias_guardadas = this.iniciar_transaccion(["recargas"], "recargas");
 
-            const respuesta_de_solicitud = await this.procesar_solicitud_db(almacen_de_recargas.get(nombre_de_compañia));
+            const respuesta_de_obtencion_de_compañia = await this.procesar_solicitud_db(registro_de_compañias_guardadas.get(nombre_de_compañia_objetivo));
 
-            const informacion_de_compañia = respuesta_de_solicitud.target.result;
+            const informacion_de_compañia = respuesta_de_obtencion_de_compañia.target.result;
             const opciones_de_compañia = informacion_de_compañia.opciones;
 
-            const opcion_seleccionada_por_usuario = opciones_de_compañia[indice_de_opcion].recargas;
+            const opcion_seleccionada = opciones_de_compañia[indice_de_opcion_objetivo];
 
-            opcion_seleccionada_por_usuario.push(informacion_de_recarga);
+            opcion_seleccionada.recargas.push(informacion_de_nueva_recarga);
 
-            const respuesta_de_solicitud_de_actualizacion = await this.procesar_solicitud_db(almacen_de_recargas.put(informacion_de_compañia));
+            const respuesta_de_actualizacion_de_opcion = await this.procesar_solicitud_db(registro_de_compañias_guardadas.put(informacion_de_compañia));
 
-            return [respuesta_de_solicitud_de_actualizacion, null];
+            return [respuesta_de_actualizacion_de_opcion, null];
 
         }catch(error){
             return [null, error];

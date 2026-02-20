@@ -7,8 +7,16 @@ const datso = new BASE_DE_DATOS("db_recaragas", 23);
 
 datso.iniciar_base_de_datos();
 setTimeout(() => {
-    datso.agregar_nueva_recarga("diego", "todo incluido perro", "hola").then(console.log);
+    datso.agregar_nueva_compañia("Tigo").then(console.log);
 }, 2000);
+setTimeout(() => {
+    datso.agregar_nueva_opcion("Tigo", "Todo incluido").then(console.log);
+}, 3000);
+
+setTimeout(() => {
+    datso.agregar_nueva_recarga("Tigo", 0, "1 dia de todo incluido").then(console.log);
+}, 4000);
+
 
 
 let estado_usuario = ["main-options"];
