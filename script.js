@@ -1,7 +1,15 @@
-import {obtener_opciones_compañia, agregar_nueva_compañia} from "./base_de_datos.js";
+import {BASE_DE_DATOS} from "./base_de_datos.js";
 import {insertar_elementos_en_db, obtener_coleccion_completa_db} from "./funciones_de_historial_recargas.js";
 
 const estado_inicio_sesion = localStorage.getItem("inicioSesion");
+
+const datso = new BASE_DE_DATOS("db_recaragas", 23);
+
+datso.iniciar_base_de_datos();
+setTimeout(() => {
+    datso.agregar_nueva_recarga("diego", "todo incluido perro", "hola").then(console.log);
+}, 2000);
+
 
 let estado_usuario = ["main-options"];
 localStorage.setItem("informacion_de_recarga", JSON.stringify({numero: null, compañia: null, descripcion: null, precio: null, fecha: null}));
