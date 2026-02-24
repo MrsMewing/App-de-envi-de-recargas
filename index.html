@@ -24,13 +24,7 @@
   <div class="main-content" id="main-content">
     <h2 id="main-title">Selecciona una de las opciones:</h2>
 
-    <div class="grid-options" id="main-options">
-      <div class="option-tile">Tigo</div>
-      <div class="option-tile">Claro</div>
-      <div class="option-tile">Movistar</div>
-      <div class="option-tile">Pillofon</div>
-      <div class="option-tile">Otros</div>
-    </div>
+    <div class="grid-options" id="main-options"></div>
     
     <!-- Contenedor donde se guardaran y luego mostraran las opciones de cada tipo de recarga -->
 
@@ -98,14 +92,12 @@
       </form>
     </div>
   </div>
-  
-  <script type="module" src="script.js"></script>
 
-  <script>
-    function seleccionarCompania(element) {
-    document.querySelectorAll(".company-item").forEach(item => item.classList.remove("selected"));
-    element.classList.add("selected");
-  }
-  </script>
+  <div id="loading-spinner" class="loading-spinner hidden">
+      <div class="spinner"></div>
+      <p>Cargando los servicios...</p>
+  </div>
+    
+  <script type="module" src="script.js"></script>
 </body>
 </html>

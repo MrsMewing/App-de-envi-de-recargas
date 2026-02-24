@@ -1,23 +1,40 @@
-import {BASE_DE_DATOS} from "./base_de_datos.js";
-import {insertar_elementos_en_db, obtener_coleccion_completa_db} from "./funciones_de_historial_recargas.js";
+import { BASE_DE_DATOS } from "./base_de_datos.js";
+import { insertar_elementos_en_db, obtener_coleccion_completa_db } from "./funciones_de_historial_recargas.js";
+import { iniciar_animacion_de_espera, detener_animacion_de_espera } from "./manejo_de_animacion_de_espera.js";
+
+iniciar_animacion_de_espera("Cargando recursos de app...");
 
 const estado_inicio_sesion = localStorage.getItem("inicioSesion");
 
-const datso = new BASE_DE_DATOS("db_recaragas", 23);
+const base_de_datos_app = new BASE_DE_DATOS("db_recaragas", 23);
 
-datso.iniciar_base_de_datos();
-setTimeout(() => {
-    datso.agregar_nueva_compañia("Tigo").then(console.log);
-}, 2000);
-setTimeout(() => {
-    datso.agregar_nueva_opcion("Tigo", "Todo incluido").then(console.log);
-}, 3000);
+base_de_datos_app.iniciar_base_de_datos()
+.then((mensaje_de_db) => {
+    alert(mensaje_de_db);
+    base_de_datos_app.otener_registro_de_compañias()
+    .then((respuesta_de_solicitud) => {
+        const registro_de_compañias_guardadas = respuesta_de_solicitud.target.result;
+        
+        if (registro_de_compañias_guardadas.length < 1) {
+            const mensaje_de_error = document.createElement("h1");
+            mensaje_de_error.innerText = "No hay datos para mostrar, agrega algunos";
 
-setTimeout(() => {
-    datso.agregar_nueva_recarga("Tigo", 0, "1 dia de todo incluido").then(console.log);
-}, 4000);
+            document.getElementById("main-options").appendChild(mensaje_de_error);
+            return null;
+        };
 
 
+    }).catch((error) => {
+        console.log(error);
+    })
+}).catch((error) => {
+    alert("ocurrio un error, mas info en la consola");
+    console.log(error);
+}).finally(()=> {
+    setTimeout(() => {
+        detener_animacion_de_espera()
+    }, 1000);
+})
 
 let estado_usuario = ["main-options"];
 localStorage.setItem("informacion_de_recarga", JSON.stringify({numero: null, compañia: null, descripcion: null, precio: null, fecha: null}));
@@ -41,6 +58,8 @@ function updateFloatingButton(seccion) {
 }
 
 updateFloatingButton("main-options");
+
+
 //recorre cada opcion y asignale una funcion para que se active cuando se presione la opcion
 Array.from(document.getElementsByClassName("grid-options")[0].children).forEach(element => {
 
@@ -56,7 +75,7 @@ Array.from(document.getElementsByClassName("grid-options")[0].children).forEach(
 
         updateFloatingButton("opciones-recargas");
 
-        const informacion_compañia = obtener_opciones_compañia(nombre_compañia);
+        const informacion_compañia = null;
 
         if(informacion_compañia.length < 1) {
             const mensaje = document.createElement("h1");

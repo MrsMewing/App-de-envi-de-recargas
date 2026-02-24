@@ -29,25 +29,32 @@ export class BASE_DE_DATOS {
     }
 
     iniciar_base_de_datos() {
-        const solicitud_de_apertura_de_db = indexedDB.open(this.nombre_de_base_de_datos, this.version_de_base_de_datos);
+        return new Promise((resolve, reject) => {
+            const solicitud_de_apertura_de_db = indexedDB.open(this.nombre_de_base_de_datos, this.version_de_base_de_datos);
 
-        solicitud_de_apertura_de_db.onerror = (evento_de_error) => {
-            alert("ocurrio un error al abrir la db, abre la consola para mas informacion");
-            console.log(evento_de_error);
+            solicitud_de_apertura_de_db.onerror = (evento_de_error) => {
+                reject(evento_de_error);
+            }
 
-            //console.error(`Database error: ${evento_de_error.target.error?.message}`);
-        }
+            solicitud_de_apertura_de_db.onupgradeneeded = (evento) => {
+                const sesion_de_base_de_datos = evento.target.result; 
 
-        solicitud_de_apertura_de_db.onupgradeneeded = (evento) => {
-            const sesion_de_base_de_datos = evento.target.result; 
+                sesion_de_base_de_datos.createObjectStore("recargas", { keyPath: "compañia" });
+            }
 
-            sesion_de_base_de_datos.createObjectStore("recargas", { keyPath: "compañia" });
-        }
+            solicitud_de_apertura_de_db.onsuccess = (event) => {
+                this.sesion_de_base_de_datos = event.target.result;
+                resolve("La base de datos fue iniciada correctamente");
+            }  
+        })
+    }
+    
+    async otener_registro_de_compañias(){
+        const registro_de_compañias_guardadas = this.iniciar_transaccion(["recargas"], "recargas");
 
-        solicitud_de_apertura_de_db.onsuccess = (event) => {
-            this.sesion_de_base_de_datos = event.target.result;
-            alert("Base de datos abierta correctamente");
-        }
+        const respuesta_de_obtencion_de_registro = await this.procesar_solicitud_db(registro_de_compañias_guardadas.getAll());
+
+        return respuesta_de_obtencion_de_registro;
     }
 
     async agregar_nueva_compañia (nombre_de_compañia) {
