@@ -2,41 +2,52 @@ import { BASE_DE_DATOS } from "./base_de_datos.js";
 import { insertar_elementos_en_db, obtener_coleccion_completa_db } from "./funciones_de_historial_recargas.js";
 import { iniciar_animacion_de_espera, detener_animacion_de_espera } from "./manejo_de_animacion_de_espera.js";
 
-iniciar_animacion_de_espera("Cargando recursos de app...");
-
 const estado_inicio_sesion = localStorage.getItem("inicioSesion");
 
-const base_de_datos_app = new BASE_DE_DATOS("db_recaragas", 23);
+const base_de_datos_app = new BASE_DE_DATOS("db_recaragas", 25);
 
-base_de_datos_app.iniciar_base_de_datos()
-.then((mensaje_de_db) => {
-    alert(mensaje_de_db);
-    base_de_datos_app.otener_registro_de_compañias()
-    .then((respuesta_de_solicitud) => {
-        const registro_de_compañias_guardadas = respuesta_de_solicitud.target.result;
-        
-        if (registro_de_compañias_guardadas.length < 1) {
+async function inicializar_servicios_de_app() {
+    try {
+        iniciar_animacion_de_espera("Cargando recursos de la app..."); 
+
+        const respuesta_de_apertura_de_db = await base_de_datos_app.iniciar_base_de_datos();
+
+        console.log(respuesta_de_apertura_de_db);
+
+        const respuesta_de_solicitud_extaccion_de_registro = await base_de_datos_app.obtener_registro_de_compañias();
+
+        const registro_de_compañias_guardadas = respuesta_de_solicitud_extaccion_de_registro.target.result;
+
+        if (registro_de_compañias_guardadas.length < 1 ){
             const mensaje_de_error = document.createElement("h1");
             mensaje_de_error.innerText = "No hay datos para mostrar, agrega algunos";
+            mensaje_de_error.setAttribute("id", "texto-principal-informativo-de-error");
 
             document.getElementById("main-options").appendChild(mensaje_de_error);
             return null;
-        };
+        }
 
+        const contenedor_de_opciones_principales = document.getElementById("main-options");
+        registro_de_compañias_guardadas.forEach((compañia) => {
+            const opcion = document.createElement("div");
+            opcion.className = "option-tile";
+            opcion.innerText = compañia.nombre;
 
-    }).catch((error) => {
+            contenedor_de_opciones_principales.appendChild(opcion);
+        })
+
+    } catch (error) {
+        alert("Error al iniciar la db u obtener datos de la misma db");
         console.log(error);
-    })
-}).catch((error) => {
-    alert("ocurrio un error, mas info en la consola");
-    console.log(error);
-}).finally(()=> {
-    setTimeout(() => {
-        detener_animacion_de_espera()
-    }, 1000);
-})
+    }finally{
+        setTimeout(() => { detener_animacion_de_espera(); }, 1200);
+    }
+}
+
+inicializar_servicios_de_app();
 
 let estado_usuario = ["main-options"];
+
 localStorage.setItem("informacion_de_recarga", JSON.stringify({numero: null, compañia: null, descripcion: null, precio: null, fecha: null}));
 
 if (!estado_inicio_sesion){
@@ -58,68 +69,6 @@ function updateFloatingButton(seccion) {
 }
 
 updateFloatingButton("main-options");
-
-
-//recorre cada opcion y asignale una funcion para que se active cuando se presione la opcion
-Array.from(document.getElementsByClassName("grid-options")[0].children).forEach(element => {
-
-    element.addEventListener("click", (event) => {
-        const nombre_compañia = event.target.textContent.trim();
-        
-        document.getElementById("main-options").style.display = "none";
-        document.getElementById("main-title").textContent = "Selecciona alguna opcion de " + nombre_compañia + ":";
-
-        const contenedor_opciones = document.getElementById("opciones-recargas");
-        contenedor_opciones.innerHTML = "";
-        estado_usuario.push("opciones-recargas");
-
-        updateFloatingButton("opciones-recargas");
-
-        const informacion_compañia = null;
-
-        if(informacion_compañia.length < 1) {
-            const mensaje = document.createElement("h1");
-            mensaje.innerText = "No hay opciones disponibles \n404";
-            contenedor_opciones.appendChild(mensaje);
-            contenedor_opciones.style.display = "grid";
-
-            return;
-        }
-
-        for (let opcion of informacion_compañia[0].opciones){
-            let div_opcion = document.createElement("div");
-            div_opcion.className = "option-tile recharge-tile";
-            div_opcion.innerHTML = `<h3>Recarga ${nombre_compañia}</h3><p>${opcion.nombre}</p>`;
-            div_opcion.onclick = function (){
-                
-                const informacion_de_recarga = localStorage.getItem("informacion_de_recarga")? JSON.parse(localStorage.getItem("informacion_de_recarga")) : {numero: null, compañia: null, descripcion: null, precio: null, fecha: null};
-                informacion_de_recarga.compañia = nombre_compañia;
-
-                localStorage.setItem("informacion_de_recarga", JSON.stringify(informacion_de_recarga));
-
-                if (opcion.recargas.length < 1) {
-                    document.getElementById("opciones-recargas").style.display = "none";
-
-                    const mensaje_informativo = document.createElement("h1");
-
-                    mensaje_informativo.innerText = "No hay recargas disponibles \n404";
-                    document.getElementById("menu-de-recargas").appendChild(mensaje_informativo);
-
-                    document.getElementById("menu-de-recargas").style.display = "grid";
-                    return;
-                }
-
-                mostrar_menu_opciones(opcion.nombre, opcion.recargas, nombre_compañia);
-            }
-
-            contenedor_opciones.appendChild(div_opcion);
-        }
-
-        contenedor_opciones.style.display = "grid";
-
-    })
-
-});
 
 function mostrar_menu_opciones(opcion, opciones, compañia){
     document.getElementById("main-title").textContent = "Selecciona una opcion de " + opcion;
@@ -377,3 +326,28 @@ function crear_recordatorio_en_historial(numero_telefonico, compañia, informaci
 
     cotenedor_historial.appendChild(contenedor_principal);
 }
+
+document.getElementById("add-company").addEventListener("click", () => {
+    const nombre_de_nueva_compañia = prompt("Introduce el nombre de la compañia nueva");
+
+    base_de_datos_app.agregar_nueva_compañia(nombre_de_nueva_compañia).then((respuesta_de_solicitud_para_añadir_compañia) => {
+        console.log(respuesta_de_solicitud_para_añadir_compañia);
+        //despues de confirmar, agrego los datos en el contenedor, en caso de que no hayan datos borramos el mensaje de error y mostramos los datos
+        //y si hay datos, solo agregamos el nuevo dato al principio
+        
+        const contenedor_de_opciones_principales = document.getElementById("main-options");
+
+        const lista_de_opciones_principales = Array.from(document.getElementById("main-options").children);
+
+        //verifica si en la lista no hay datos y esta el texto informativo, para asi limpiar el contenedor y mostrar el elemmento
+        if (lista_de_opciones_principales.length < 2 && lista_de_opciones_principales[0].getAttribute("id") == "texto-principal-informativo-de-error") contenedor_de_opciones_principales.innerHTML = "";
+
+        const opcion = document.createElement("div");
+        opcion.className = "option-tile";
+        opcion.innerText = nombre_de_nueva_compañia;
+
+        contenedor_de_opciones_principales.appendChild(opcion);
+    }).catch((error) => {
+        console.log(error);
+    })
+})

@@ -39,7 +39,7 @@ export class BASE_DE_DATOS {
             solicitud_de_apertura_de_db.onupgradeneeded = (evento) => {
                 const sesion_de_base_de_datos = evento.target.result; 
 
-                sesion_de_base_de_datos.createObjectStore("recargas", { keyPath: "compañia" });
+                sesion_de_base_de_datos.createObjectStore("recargas", { keyPath: "nombre" });
             }
 
             solicitud_de_apertura_de_db.onsuccess = (event) => {
@@ -49,7 +49,7 @@ export class BASE_DE_DATOS {
         })
     }
     
-    async otener_registro_de_compañias(){
+    async obtener_registro_de_compañias(){
         const registro_de_compañias_guardadas = this.iniciar_transaccion(["recargas"], "recargas");
 
         const respuesta_de_obtencion_de_registro = await this.procesar_solicitud_db(registro_de_compañias_guardadas.getAll());
@@ -58,16 +58,12 @@ export class BASE_DE_DATOS {
     }
 
     async agregar_nueva_compañia (nombre_de_compañia) {
-        try {
-            const almacen_de_recargas = this.iniciar_transaccion(["recargas"], "recargas");
+        const almacen_de_recargas = this.iniciar_transaccion(["recargas"], "recargas");
 
-            const estructura_de_opcion_compañia = {compañia: nombre_de_compañia, opciones: []};
-            const respuesta_de_solicitud = await this.procesar_solicitud_db(almacen_de_recargas.add(estructura_de_opcion_compañia));
+        const estructura_de_opcion_compañia = {nombre: nombre_de_compañia, opciones: []};
+        const respuesta_de_solicitud = await this.procesar_solicitud_db(almacen_de_recargas.add(estructura_de_opcion_compañia));
 
-            return [respuesta_de_solicitud, null];
-        }catch(error){
-            return [null, error];
-        }
+        return respuesta_de_solicitud;
     }
 
     async agregar_nueva_opcion (nombre_de_compañia_objetivo, nombre_de_nueva_opcion) {
