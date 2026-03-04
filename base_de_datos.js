@@ -57,6 +57,14 @@ export class BASE_DE_DATOS {
         return respuesta_de_obtencion_de_registro;
     }
 
+    async obtener_informacion_de_compañia (nombre_de_compañia) {
+        const registro_de_compañias_guardadas = this.iniciar_transaccion(["recargas"], "recargas");
+
+        const respuesta_de_obtencion_de_infor_de_compañia = await this.procesar_solicitud_db(registro_de_compañias_guardadas.get(nombre_de_compañia));
+
+        return respuesta_de_obtencion_de_infor_de_compañia.target.result;
+    }
+
     async agregar_nueva_compañia (nombre_de_compañia) {
         const almacen_de_recargas = this.iniciar_transaccion(["recargas"], "recargas");
 
@@ -67,22 +75,18 @@ export class BASE_DE_DATOS {
     }
 
     async agregar_nueva_opcion (nombre_de_compañia_objetivo, nombre_de_nueva_opcion) {
-        try {
-            const registro_de_compañias_guardadas = this.iniciar_transaccion(["recargas"], "recargas");
+        const registro_de_compañias_guardadas = this.iniciar_transaccion(["recargas"], "recargas");
 
-            const respuesta_de_obtencion_de_compañia = await this.procesar_solicitud_db(registro_de_compañias_guardadas.get(nombre_de_compañia_objetivo));
+        const respuesta_de_obtencion_de_compañia = await this.procesar_solicitud_db(registro_de_compañias_guardadas.get(nombre_de_compañia_objetivo));
 
-            const informacion_de_compañia = respuesta_de_obtencion_de_compañia.target.result;
-            const nueva_opcion = {nombre: nombre_de_nueva_opcion, recargas: []};
+        const informacion_de_compañia = respuesta_de_obtencion_de_compañia.target.result;
+        const nueva_opcion = {nombre: nombre_de_nueva_opcion, recargas: []};
 
-            informacion_de_compañia.opciones.push(nueva_opcion);
+        informacion_de_compañia.opciones.push(nueva_opcion);
 
-            const respuesta_de_actualizacion_de_compañia = await this.procesar_solicitud_db(registro_de_compañias_guardadas.put(informacion_de_compañia));
+        const respuesta_de_actualizacion_de_compañia = await this.procesar_solicitud_db(registro_de_compañias_guardadas.put(informacion_de_compañia));
 
-            return [respuesta_de_actualizacion_de_compañia, null];
-        }catch(error){
-            return [null, error];
-        }
+        return respuesta_de_actualizacion_de_compañia
     }
 
     async agregar_nueva_recarga (nombre_de_compañia_objetivo, indice_de_opcion_objetivo, informacion_de_nueva_recarga) {

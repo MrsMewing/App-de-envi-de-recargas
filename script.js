@@ -33,6 +33,43 @@ async function inicializar_servicios_de_app() {
             opcion.className = "option-tile";
             opcion.innerText = compañia.nombre;
 
+            opcion.onclick = async (evento) => {
+                const nombre_de_compañia_seleccionada = evento.target.innerText;
+
+                iniciar_animacion_de_espera("obteniendo opciones de " + nombre_de_compañia_seleccionada);
+
+                const informacion_de_compañia = await base_de_datos_app.obtener_informacion_de_compañia(nombre_de_compañia_seleccionada);
+
+                document.getElementById("main-options").innerHTML = "";
+                document.getElementById("main-options").style.display = "none";
+
+                document.getElementById("main-title").innerText = "Selecciona alguna opcion de la compañia " + informacion_de_compañia.nombre;
+                document.getElementById("main-title").setAttribute("class", informacion_de_compañia.nombre);
+                document.getElementById("opciones-recargas").style.display = "grid";
+
+                updateFloatingButton("opciones-recargas");
+
+                if (informacion_de_compañia.opciones.length < 1) {
+                    const texto_informativo_de_opciones = document.createElement("h1");
+                    texto_informativo_de_opciones.innerText = "No hay opciones disponibles, agrega algunas";
+                    texto_informativo_de_opciones.setAttribute("id", "texto-informativo-de-compañia");
+
+                    document.getElementById("opciones-recargas").appendChild(texto_informativo_de_opciones);
+                    setTimeout(() => { detener_animacion_de_espera(); }, 1200);
+                    return null;
+                }
+
+                informacion_de_compañia.opciones.forEach((informacion_de_opcion_de_compañia) => {                    
+                    let nueva_opcion = document.createElement("div");
+                    nueva_opcion.className = "option-tile recharge-tile";
+                    nueva_opcion.innerHTML = `<h3>Recarga ${informacion_de_compañia.nombre}</h3><p>${informacion_de_opcion_de_compañia.nombre}</p>`;
+
+                    document.getElementById("opciones-recargas").appendChild(nueva_opcion);
+                });
+
+                setTimeout(() => { detener_animacion_de_espera(); }, 1200);
+            };
+
             contenedor_de_opciones_principales.appendChild(opcion);
         })
 
@@ -337,7 +374,7 @@ document.getElementById("add-company").addEventListener("click", () => {
         
         const contenedor_de_opciones_principales = document.getElementById("main-options");
 
-        const lista_de_opciones_principales = Array.from(document.getElementById("main-options").children);
+        const lista_de_opciones_principales = Array.from(contenedor_de_opciones_principales.children);
 
         //verifica si en la lista no hay datos y esta el texto informativo, para asi limpiar el contenedor y mostrar el elemmento
         if (lista_de_opciones_principales.length < 2 && lista_de_opciones_principales[0].getAttribute("id") == "texto-principal-informativo-de-error") contenedor_de_opciones_principales.innerHTML = "";
@@ -350,4 +387,25 @@ document.getElementById("add-company").addEventListener("click", () => {
     }).catch((error) => {
         console.log(error);
     })
+})
+
+document.getElementById("add-option").addEventListener("click", () => {
+    const nombre_de_nueva_opcion = prompt("Escribe el nombre de la nueva opcion: ");
+    const nombre_de_compañia = document.getElementById("main-title").getAttribute("class");
+
+    base_de_datos_app.agregar_nueva_opcion(nombre_de_compañia, nombre_de_nueva_opcion).then((respuesta_de_solicitud) => {
+
+        const contenedor_de_opciones_de_compañia = document.getElementById("opciones-recargas");
+
+        const lista_de_opciones_de_compañia = Array.from(contenedor_de_opciones_de_compañia.children);
+
+        //verifica si en la lista no hay datos y esta el texto informativo, para asi limpiar el contenedor y mostrar el elemmento
+        if (lista_de_opciones_de_compañia.length < 2 && lista_de_opciones_de_compañia[0].getAttribute("id") == "texto-informativo-de-compañia") contenedor_de_opciones_de_compañia.innerHTML = "";
+
+        let nueva_opcion = document.createElement("div");
+        nueva_opcion.className = "option-tile recharge-tile";
+        nueva_opcion.innerHTML = `<h3>Recarga ${nombre_de_compañia}</h3><p>${nombre_de_nueva_opcion}</p>`;
+
+        document.getElementById("opciones-recargas").appendChild(nueva_opcion);
+    });
 })
