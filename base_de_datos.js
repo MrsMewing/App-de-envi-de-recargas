@@ -90,24 +90,19 @@ export class BASE_DE_DATOS {
     }
 
     async agregar_nueva_recarga (nombre_de_compañia_objetivo, indice_de_opcion_objetivo, informacion_de_nueva_recarga) {
-        try {
-            const registro_de_compañias_guardadas = this.iniciar_transaccion(["recargas"], "recargas");
+        const registro_de_compañias_guardadas = this.iniciar_transaccion(["recargas"], "recargas");
 
-            const respuesta_de_obtencion_de_compañia = await this.procesar_solicitud_db(registro_de_compañias_guardadas.get(nombre_de_compañia_objetivo));
+        const respuesta_de_obtencion_de_compañia = await this.procesar_solicitud_db(registro_de_compañias_guardadas.get(nombre_de_compañia_objetivo));
 
-            const informacion_de_compañia = respuesta_de_obtencion_de_compañia.target.result;
-            const opciones_de_compañia = informacion_de_compañia.opciones;
+        const informacion_de_compañia = respuesta_de_obtencion_de_compañia.target.result;
+        const opciones_de_compañia = informacion_de_compañia.opciones;
 
-            const opcion_seleccionada = opciones_de_compañia[indice_de_opcion_objetivo];
+        const opcion_seleccionada = opciones_de_compañia[indice_de_opcion_objetivo];
 
-            opcion_seleccionada.recargas.push(informacion_de_nueva_recarga);
+        opcion_seleccionada.recargas.push(informacion_de_nueva_recarga);
 
-            const respuesta_de_actualizacion_de_opcion = await this.procesar_solicitud_db(registro_de_compañias_guardadas.put(informacion_de_compañia));
+        const respuesta_de_actualizacion_de_opcion = await this.procesar_solicitud_db(registro_de_compañias_guardadas.put(informacion_de_compañia));
 
-            return [respuesta_de_actualizacion_de_opcion, null];
-
-        }catch(error){
-            return [null, error];
-        }
+        return [respuesta_de_actualizacion_de_opcion, null];
     }
 }
