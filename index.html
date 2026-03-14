@@ -98,6 +98,50 @@
       <p>Cargando los servicios...</p>
   </div>
     
+  <!-- Modal para añadir compañía -->
+  <div class="modal" id="modal-add-company">
+    <div class="modal-content">
+      <form action="#" id="form-add-company">
+        <h3>Añadir Nueva Compañía</h3>
+        <input type="text" placeholder="Nombre de la compañía" id="input-company-name" required>
+        <div class="modal-buttons">
+          <button class="confirm-btn" type="submit">Añadir</button>
+          <button class="cancel-btn" type="button" id="cancel-add-company">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal para añadir opción -->
+  <div class="modal" id="modal-add-option">
+    <div class="modal-content">
+      <form action="#" id="form-add-option">
+        <h3>Añadir Nueva Opción</h3>
+        <input type="text" placeholder="Nombre de la opción" id="input-option-name" required>
+        <div class="modal-buttons">
+          <button class="confirm-btn" type="submit">Añadir</button>
+          <button class="cancel-btn" type="button" id="cancel-add-option">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal para añadir recarga -->
+  <div class="modal" id="modal-add-recharge">
+    <div class="modal-content">
+      <form action="#" id="form-add-recharge">
+        <h3>Añadir Nueva Recarga</h3>
+        <input type="text" placeholder="Descripción" id="input-recharge-desc" required>
+        <input type="number" placeholder="Precio" id="input-recharge-price" required>
+        <input type="text" placeholder="Código USSD" id="input-recharge-ussd" required>
+        <div class="modal-buttons">
+          <button class="confirm-btn" type="submit">Añadir</button>
+          <button class="cancel-btn" type="button" id="cancel-add-recharge">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+    
   <script type="module" src="script.js"></script>
 </body>
 </html>

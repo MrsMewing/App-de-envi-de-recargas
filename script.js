@@ -8,6 +8,7 @@ const estado_inicio_sesion = localStorage.getItem("inicioSesion");
 const base_de_datos_app = new BASE_DE_DATOS("db_recaragas", 25);
 
 let compañia_actual_seleccionada = null;
+let opcion_actual_seleccionada = null;
 
 function ocultar_texto_de_datos_no_existentes (){
     const texto_principal_de_datos_nulos = document.getElementById("texto-de-datos-no-existentes");
@@ -81,6 +82,35 @@ function cerrarModal() {
     document.getElementById("numeroInput").value = "";
     document.getElementById("input-pin-recarga").value = "";
     document.querySelectorAll(".company-item").forEach(item => item.classList.remove("selected"));
+}
+
+function abrirModalAddCompany() {
+    document.getElementById("modal-add-company").style.display = "flex";
+}
+
+function cerrarModalAddCompany() {
+    document.getElementById("modal-add-company").style.display = "none";
+    document.getElementById("input-company-name").value = "";
+}
+
+function abrirModalAddOption() {
+    document.getElementById("modal-add-option").style.display = "flex";
+}
+
+function cerrarModalAddOption() {
+    document.getElementById("modal-add-option").style.display = "none";
+    document.getElementById("input-option-name").value = "";
+}
+
+function abrirModalAddRecharge() {
+    document.getElementById("modal-add-recharge").style.display = "flex";
+}
+
+function cerrarModalAddRecharge() {
+    document.getElementById("modal-add-recharge").style.display = "none";
+    document.getElementById("input-recharge-desc").value = "";
+    document.getElementById("input-recharge-price").value = "";
+    document.getElementById("input-recharge-ussd").value = "";
 }
 
 function valida_formulario_recarga() {
@@ -284,45 +314,82 @@ function crear_recordatorio_en_historial(numero_telefonico, compañia, informaci
 }
 
 document.getElementById("add-company").addEventListener("click", () => {
-    const nombre_de_nueva_compañia = prompt("Introduce el nombre de la compañia nueva");
-
-    if (!nombre_de_nueva_compañia) return null;
-
-    base_de_datos_app.agregar_nueva_compañia(nombre_de_nueva_compañia).then((respuesta_de_solicitud_para_añadir_compañia) => {
-        
-        const contenedor_de_opciones_principales = document.querySelector(".grid-options");
-
-        ocultar_texto_de_datos_no_existentes();
-
-        const opcion = document.createElement("div");
-        opcion.className = "option-tile";
-        opcion.id = "opcion-valida";
-        opcion.innerText = nombre_de_nueva_compañia;
-
-        contenedor_de_opciones_principales.appendChild(opcion);
-    }).catch((error) => {
-        console.log(error);
-    })
+    abrirModalAddCompany();
 })
 
 document.getElementById("add-option").addEventListener("click", () => {
-    const nombre_de_nueva_opcion = prompt("Introduce el nombre de la oopcion");
-    const nombre_de_compañia_seleccionada = document.getElementById("main-title").getAttribute("class");
-
-    if (!nombre_de_nueva_opcion) return null;
-
-    base_de_datos_app.agregar_nueva_opcion(nombre_de_compañia_seleccionada, nombre_de_nueva_opcion).then((respuesta_de_solicitud) => {
-
-        ocultar_texto_de_datos_no_existentes();
-        
-        let nueva_opcion = document.createElement("div");
-        nueva_opcion.className = "option-tile recharge-tile";
-        nueva_opcion.id = nombre_de_nueva_opcion;
-        nueva_opcion.innerHTML = `<h3 id="${nombre_de_nueva_opcion}">Recarga ${nombre_de_compañia_seleccionada}</h3><p id="${nombre_de_nueva_opcion}">${nombre_de_nueva_opcion}</p>`;
-
-        document.querySelector(".grid-options").appendChild(nueva_opcion);
-    })
+    abrirModalAddOption();
 })
+
+document.getElementById("add-recharge").addEventListener("click", () => {
+    abrirModalAddRecharge();
+})
+
+document.getElementById("form-add-company").addEventListener("submit", (event) => {
+    event.preventDefault();
+    const nombre = document.getElementById("input-company-name").value.trim();
+    if (!nombre) return;
+
+    base_de_datos_app.agregar_nueva_compañia(nombre).then(() => {
+        const contenedor = document.querySelector(".grid-options");
+        ocultar_texto_de_datos_no_existentes();
+        const opcion = document.createElement("div");
+        opcion.className = "option-tile";
+        opcion.id = "opcion-valida";
+        opcion.innerText = nombre;
+        contenedor.appendChild(opcion);
+        cerrarModalAddCompany();
+    }).catch(console.log);
+})
+
+document.getElementById("cancel-add-company").addEventListener("click", cerrarModalAddCompany);
+
+document.getElementById("form-add-option").addEventListener("submit", (event) => {
+    event.preventDefault();
+    const nombre = document.getElementById("input-option-name").value.trim();
+    if (!nombre) return;
+
+    const nombreCompania = document.getElementById("main-title").getAttribute("class");
+
+    base_de_datos_app.agregar_nueva_opcion(nombreCompania, nombre).then(() => {
+        ocultar_texto_de_datos_no_existentes();
+        let nuevaOpcion = document.createElement("div");
+        nuevaOpcion.className = "option-tile recharge-tile";
+        nuevaOpcion.id = nombre;
+        nuevaOpcion.innerHTML = `<h3 id="${nombre}">Recarga ${nombreCompania}</h3><p id="${nombre}">${nombre}</p>`;
+        document.querySelector(".grid-options").appendChild(nuevaOpcion);
+        cerrarModalAddOption();
+    }).catch(console.log);
+})
+
+document.getElementById("cancel-add-option").addEventListener("click", cerrarModalAddOption);
+
+document.getElementById("form-add-recharge").addEventListener("submit", (event) => {
+    event.preventDefault();
+    const desc = document.getElementById("input-recharge-desc").value.trim();
+    const precio = parseFloat(document.getElementById("input-recharge-price").value);
+    const ussd = document.getElementById("input-recharge-ussd").value.trim();
+    if (!desc || isNaN(precio) || !ussd) return;
+
+    const nombreCompania = compañia_actual_seleccionada;
+    const nombreOpcion = opcion_actual_seleccionada;
+
+    // Obtener el índice de la opción
+    base_de_datos_app.obtener_informacion_de_compañia(nombreCompania).then(compania => {
+        const indice = compania.opciones.findIndex(op => op.nombre === nombreOpcion);
+        if (indice === -1) return;
+
+        const nuevaRecarga = { descripcion: desc, precio, ussd };
+        return base_de_datos_app.agregar_nueva_recarga(nombreCompania, indice, nuevaRecarga);
+    }).then(() => {
+        // Re-renderizar las recargas
+        ocultar_texto_de_datos_no_existentes();
+        renderizar_recargas_de_opciones(base_de_datos_app, nombreCompania, nombreOpcion);
+        cerrarModalAddRecharge();
+    }).catch(console.log);
+})
+
+document.getElementById("cancel-add-recharge").addEventListener("click", cerrarModalAddRecharge);
 
 document.querySelector(".grid-options").addEventListener("click", function(activador_de_evento){
     const contenedor_actual_de_opciones = document.querySelector(".grid-options");
@@ -348,8 +415,7 @@ document.querySelector(".grid-options").addEventListener("click", function(activ
         let etiquedas_validas_como_opcion = ["P", "H3", "DIV"];
 
         if(etiquedas_validas_como_opcion.includes(nombre_de_elemento_clickeado)){
-
-            renderizar_recargas_de_opciones(base_de_datos_app, compañia_actual_seleccionada, elemento_clickeado.id);
+            opcion_actual_seleccionada = elemento_clickeado.id;            renderizar_recargas_de_opciones(base_de_datos_app, compañia_actual_seleccionada, elemento_clickeado.id);
         }
     }
 });
