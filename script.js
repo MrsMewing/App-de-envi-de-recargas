@@ -1,7 +1,7 @@
 import { BASE_DE_DATOS } from "./base_de_datos.js";
 import { insertar_elementos_en_db, obtener_coleccion_completa_db } from "./funciones_de_historial_recargas.js";
 import { iniciar_animacion_de_espera, detener_animacion_de_espera } from "./manejo_de_animacion_de_espera.js";
-import { renderizar_opciones_de_compañia, updateFloatingButton, mostrar_texto_de_datos_no_existentes, renderizar_recargas_de_opciones} from "./renderizado_de_secciones.js";
+import { renderizar_seccion_principal, renderizar_opciones_de_compañia, updateFloatingButton, mostrar_texto_de_datos_no_existentes, renderizar_recargas_de_opciones} from "./renderizado_de_secciones.js";
 
 const estado_inicio_sesion = localStorage.getItem("inicioSesion");
 
@@ -22,22 +22,7 @@ async function inicializar_servicios_de_app() {
 
         const respuesta_de_apertura_de_db = await base_de_datos_app.iniciar_base_de_datos();
 
-        const respuesta_de_solicitud_extaccion_de_registro = await base_de_datos_app.obtener_registro_de_compañias();
-
-        const registro_de_compañias_guardadas = respuesta_de_solicitud_extaccion_de_registro.target.result;
-
-        if (registro_de_compañias_guardadas.length < 1 ){mostrar_texto_de_datos_no_existentes(); return null}
-
-        const contenedor_de_opciones_principales = document.querySelector(".grid-options");
-        registro_de_compañias_guardadas.forEach((compañia) => {
-            const opcion = document.createElement("div");
-            opcion.className = "option-tile";
-            opcion.id = "opcion-valida";
-            opcion.innerText = compañia.nombre;
-
-            contenedor_de_opciones_principales.appendChild(opcion);
-        })
-
+        renderizar_seccion_principal(base_de_datos_app);
     } catch (error) {
         alert("Error al iniciar la db u obtener datos de la misma db");
         console.log(error);
@@ -46,7 +31,7 @@ async function inicializar_servicios_de_app() {
     }
 }
 
-inicializar_servicios_de_app();
+inicializar_servicios_de_app()
 
 let estado_usuario = ["main-options"];
 
@@ -172,31 +157,6 @@ document.getElementById("formulario-envio-recarga").addEventListener("submit", (
 
 document.getElementById("boton-cerrar-modal").addEventListener("click", () => {
     cerrarModal();
-})
-
-function mostrar_seccion(id_seccion){
-    let secciones = Array.from(document.getElementsByClassName("grid-options"));
-
-    secciones.forEach((seccion) => {
-        seccion.style.display = "none";
-    })
-
-    document.getElementById(id_seccion).style.display = "grid";
-}
-
-document.getElementById("btn-retroceder").addEventListener("click", () => {
-
-    if(estado_usuario[estado_usuario.length - 1] != "main-options") estado_usuario.pop();
-
-    mostrar_seccion(estado_usuario[estado_usuario.length - 1]);
-    updateFloatingButton(estado_usuario[estado_usuario.length - 1]);
-})
-
-document.getElementById("seccion-de-recargas").addEventListener("click", () => {
-    mostrar_seccion("main-options", "Selecciona una de las opciones");
-
-    estado_usuario = ["main-options"];
-    updateFloatingButton("main-options");
 })
 
 document.getElementById("seccion-de-recargas").addEventListener("click", () => {
@@ -398,11 +358,12 @@ document.querySelector(".grid-options").addEventListener("click", function(activ
     if (contenedor_actual_de_opciones.getAttribute("id") == "main-options"){
         const informacion_de_evento = activador_de_evento.target;
 
-        //solo toma en cuenta si se presiono alguna opcion, y cosas como espacios en blanco de la pagina
+        //verifica que haya sido una opcion valida
         if (informacion_de_evento.getAttribute("id") == "opcion-valida"){
             const nombre_de_compañia_seleccionada = informacion_de_evento.innerText;
 
-            renderizar_opciones_de_compañia( base_de_datos_app, nombre_de_compañia_seleccionada);
+
+            renderizar_opciones_de_compañia( base_de_datos_app, nombre_de_compañia_seleccionada)
             compañia_actual_seleccionada = nombre_de_compañia_seleccionada;
         }
     }
@@ -415,8 +376,20 @@ document.querySelector(".grid-options").addEventListener("click", function(activ
         let etiquedas_validas_como_opcion = ["P", "H3", "DIV"];
 
         if(etiquedas_validas_como_opcion.includes(nombre_de_elemento_clickeado)){
-            opcion_actual_seleccionada = elemento_clickeado.id;            renderizar_recargas_de_opciones(base_de_datos_app, compañia_actual_seleccionada, elemento_clickeado.id);
+            opcion_actual_seleccionada = elemento_clickeado.id;       
+            renderizar_recargas_de_opciones(base_de_datos_app, compañia_actual_seleccionada, elemento_clickeado.id)
         }
     }
 });
 
+document.getElementById("btn-retroceder").addEventListener("click", function(){
+    const nombre_de_seccion_actual = document.querySelector(".grid-options").getAttribute("id");
+
+    if (nombre_de_seccion_actual == "opciones-recargas"){
+        renderizar_seccion_principal(base_de_datos_app);
+    }
+    else if (nombre_de_seccion_actual == "menu-de-recargas"){
+        renderizar_opciones_de_compañia(base_de_datos_app, compañia_actual_seleccionada);
+        console.log(opcion_actual_seleccionada);
+    }
+});
