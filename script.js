@@ -331,6 +331,14 @@ document.getElementById("form-add-recharge").addEventListener("submit", (event) 
     const ussd = document.getElementById("input-recharge-ussd").value.trim();
     if (!desc || isNaN(precio) || !ussd) return;
 
+    const regex = /--TELEFONO--.*--PIN--|--PIN--.*--TELEFONO--/;
+
+    const coincidencia = regex.test(ussd);
+
+    if (!coincidencia) {
+        document.getElementById("texto-informativo-de-codigo-ussd").style.display = "block";
+        return;
+    }
     const nombreCompania = compañia_actual_seleccionada;
     const nombreOpcion = opcion_actual_seleccionada;
 
