@@ -362,7 +362,6 @@ document.querySelector(".grid-options").addEventListener("click", function(activ
         if (elemento_clickeado.getAttribute("id") == "opcion-valida"){
             const nombre_de_compañia_seleccionada = elemento_clickeado.innerText;
 
-
             renderizar_opciones_de_compañia( base_de_datos_app, nombre_de_compañia_seleccionada)
             compañia_actual_seleccionada = nombre_de_compañia_seleccionada;
         }
@@ -381,12 +380,17 @@ document.querySelector(".grid-options").addEventListener("click", function(activ
     }
 
     else if (contenedor_actual_de_opciones.getAttribute("id") == "menu-de-recargas"){
-        let etiquedas_validas_como_opcion = ["DIV", "H3", "P", "A"];
 
-        console.log(elemento_clickeado);
-        if(etiquedas_validas_como_opcion.includes(elemento_clickeado.tagName) && elemento_clickeado.getAttribute("class") != "grid-options"){
-            
-        }
+        //verfica si se presiono algun espacio en blanco o fuera de alguna opcion valida
+        if(elemento_clickeado.getAttribute("class") == "grid-options") return null;
+    
+        //verifica si se presiono la opcion o en algun parte de la opcion, siempre devuelve toda la opcion completa
+        const opcion_seleccionada = elemento_clickeado.getAttribute("class") == "option-tile recharge tile" ? elemento_clickeado : elemento_clickeado.parentNode;
+
+        const DESCRIPCION_DE_RECARGA = opcion_seleccionada.querySelector("p").innerText;
+        const USSD_DE_RECARGA = opcion_seleccionada.querySelector("a").innerText;
+
+        abrirModal(DESCRIPCION_DE_RECARGA, USSD_DE_RECARGA, compañia_actual_seleccionada);
     }
 });
 
