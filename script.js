@@ -353,14 +353,14 @@ document.getElementById("cancel-add-recharge").addEventListener("click", cerrarM
 
 document.querySelector(".grid-options").addEventListener("click", function(activador_de_evento){
     const contenedor_actual_de_opciones = document.querySelector(".grid-options");
+    const elemento_clickeado = activador_de_evento.target;
 
     //verifica si actualmente el cotenedor esta mostrando las opciones principales
     if (contenedor_actual_de_opciones.getAttribute("id") == "main-options"){
-        const informacion_de_evento = activador_de_evento.target;
 
         //verifica que haya sido una opcion valida
-        if (informacion_de_evento.getAttribute("id") == "opcion-valida"){
-            const nombre_de_compañia_seleccionada = informacion_de_evento.innerText;
+        if (elemento_clickeado.getAttribute("id") == "opcion-valida"){
+            const nombre_de_compañia_seleccionada = elemento_clickeado.innerText;
 
 
             renderizar_opciones_de_compañia( base_de_datos_app, nombre_de_compañia_seleccionada)
@@ -370,7 +370,6 @@ document.querySelector(".grid-options").addEventListener("click", function(activ
 
     //verifica si se muestran las opciones de la compañia seleccionada
     else if (contenedor_actual_de_opciones.getAttribute("id") == "opciones-recargas"){
-        let elemento_clickeado = activador_de_evento.target;
         let nombre_de_elemento_clickeado = elemento_clickeado.tagName;
 
         let etiquedas_validas_como_opcion = ["P", "H3", "DIV"];
@@ -378,6 +377,15 @@ document.querySelector(".grid-options").addEventListener("click", function(activ
         if(etiquedas_validas_como_opcion.includes(nombre_de_elemento_clickeado)){
             opcion_actual_seleccionada = elemento_clickeado.id;       
             renderizar_recargas_de_opciones(base_de_datos_app, compañia_actual_seleccionada, elemento_clickeado.id)
+        }
+    }
+
+    else if (contenedor_actual_de_opciones.getAttribute("id") == "menu-de-recargas"){
+        let etiquedas_validas_como_opcion = ["DIV", "H3", "P", "A"];
+
+        console.log(elemento_clickeado);
+        if(etiquedas_validas_como_opcion.includes(elemento_clickeado.tagName) && elemento_clickeado.getAttribute("class") != "grid-options"){
+            
         }
     }
 });
