@@ -331,9 +331,9 @@ document.getElementById("form-add-recharge").addEventListener("submit", (event) 
     const ussd = document.getElementById("input-recharge-ussd").value.trim();
     if (!desc || isNaN(precio) || !ussd) return;
 
-    const regex = /--TELEFONO--.*--PIN--|--PIN--.*--TELEFONO--/;
+    const patron_de_busqueda = /^(?=.*\d)(?=.*--PIN--)(?=.*--TELEFONO--)(\*(\d+|--PIN--|--TELEFONO--))+#$/;
 
-    const coincidencia = regex.test(ussd);
+    const coincidencia = patron_de_busqueda.test(ussd);
 
     if (!coincidencia) {
         document.getElementById("texto-informativo-de-codigo-ussd").style.display = "block";
