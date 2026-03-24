@@ -381,10 +381,17 @@ document.querySelector(".grid-options").addEventListener("click", function(activ
 
     //verifica si actualmente el cotenedor esta mostrando las opciones principales
     if (contenedor_actual_de_opciones.getAttribute("id") == "main-options"){
+
         //verifica que haya sido una opcion valida
         if (elemento_clickeado.getAttribute("id") == "opcion-valida"){
-            const nombre_de_compañia_seleccionada = elemento_clickeado.innerText;
+            const nombre_de_compañia_seleccionada = elemento_clickeado.querySelector("p").innerText;
 
+            renderizar_opciones_de_compañia( base_de_datos_app, nombre_de_compañia_seleccionada)
+            compañia_actual_seleccionada = nombre_de_compañia_seleccionada;
+        }
+        else if (elemento_clickeado.tagName == "P"){
+            const nombre_de_compañia_seleccionada = elemento_clickeado.innerText;
+            
             renderizar_opciones_de_compañia( base_de_datos_app, nombre_de_compañia_seleccionada)
             compañia_actual_seleccionada = nombre_de_compañia_seleccionada;
         }
