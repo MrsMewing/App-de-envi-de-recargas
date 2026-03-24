@@ -296,7 +296,17 @@ document.getElementById("form-add-company").addEventListener("submit", (event) =
         const opcion = document.createElement("div");
         opcion.className = "option-tile";
         opcion.id = "opcion-valida";
-        opcion.innerText = nombre;
+
+        const contenido_de_opcion = document.createElement("p");
+        contenido_de_opcion.innerText = nombre;
+
+        opcion.appendChild(contenido_de_opcion);
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.className = "delete-btn";
+        deleteBtn.innerText = "×";
+        opcion.appendChild(deleteBtn);
+
         contenedor.appendChild(opcion);
         cerrarModalAddCompany();
     }).catch(console.log);
@@ -317,6 +327,12 @@ document.getElementById("form-add-option").addEventListener("submit", (event) =>
         nuevaOpcion.className = "option-tile recharge-tile";
         nuevaOpcion.id = nombre;
         nuevaOpcion.innerHTML = `<h3 id="${nombre}">Recarga ${nombreCompania}</h3><p id="${nombre}">${nombre}</p>`;
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.className = "delete-btn";
+        deleteBtn.innerText = "×";
+        nuevaOpcion.appendChild(deleteBtn);
+
         document.querySelector(".grid-options").appendChild(nuevaOpcion);
         cerrarModalAddOption();
     }).catch(console.log);
@@ -365,7 +381,6 @@ document.querySelector(".grid-options").addEventListener("click", function(activ
 
     //verifica si actualmente el cotenedor esta mostrando las opciones principales
     if (contenedor_actual_de_opciones.getAttribute("id") == "main-options"){
-
         //verifica que haya sido una opcion valida
         if (elemento_clickeado.getAttribute("id") == "opcion-valida"){
             const nombre_de_compañia_seleccionada = elemento_clickeado.innerText;

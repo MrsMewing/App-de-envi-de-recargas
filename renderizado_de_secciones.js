@@ -54,7 +54,16 @@ export async function renderizar_seccion_principal(base_de_datos_app) {
         const opcion = document.createElement("div");
         opcion.className = "option-tile";
         opcion.id = "opcion-valida";
-        opcion.innerText = compañia.nombre;
+
+        const contenido_de_opcion = document.createElement("p");
+        contenido_de_opcion.innerText = compañia.nombre;
+
+        opcion.appendChild(contenido_de_opcion);
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.className = "delete-btn";
+        deleteBtn.innerText = "×";
+        opcion.appendChild(deleteBtn);
 
         contenedor_de_opciones_principales.appendChild(opcion);
     })
@@ -75,6 +84,11 @@ export async function renderizar_opciones_de_compañia( base_de_datos_app, nombr
     nueva_opcion.className = "option-tile recharge-tile";
     nueva_opcion.id = informacion_de_opcion_de_compañia.nombre;
     nueva_opcion.innerHTML = `<h3 id="${informacion_de_opcion_de_compañia.nombre}">Recarga ${compañia.nombre}</h3><p id="${informacion_de_opcion_de_compañia.nombre}">${informacion_de_opcion_de_compañia.nombre}</p>`;
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.className = "delete-btn";
+    deleteBtn.innerText = "×";
+    nueva_opcion.appendChild(deleteBtn);
 
     document.querySelector(".grid-options").appendChild(nueva_opcion);
     });  
@@ -104,6 +118,11 @@ export async function renderizar_recargas_de_opciones(base_de_datos, nombre_de_c
         let div_opcion = document.createElement("div");
         div_opcion.className = "option-tile recharge tile";
         div_opcion.innerHTML = `<h3>Q${recarga.precio}</h3><p>${recarga.descripcion}</p> <a href="#" style="display: none;">${recarga.ussd} </a>`;
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.className = "delete-btn";
+        deleteBtn.innerText = "×";
+        div_opcion.appendChild(deleteBtn);
 
         contenedor_de_recargas.appendChild(div_opcion);
     }
