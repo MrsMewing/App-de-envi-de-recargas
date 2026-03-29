@@ -290,7 +290,9 @@ document.getElementById("form-add-company").addEventListener("submit", (event) =
     const nombre = document.getElementById("input-company-name").value.trim();
     if (!nombre) return;
 
-    base_de_datos_app.agregar_nueva_compañia(nombre).then(() => {
+    const id = Array.from(document.querySelector(".grid-options").children).length;
+
+    base_de_datos_app.agregar_nueva_compañia(nombre, id).then(() => {
         const contenedor = document.querySelector(".grid-options");
         ocultar_texto_de_datos_no_existentes();
         const opcion = document.createElement("div");
@@ -321,7 +323,9 @@ document.getElementById("form-add-option").addEventListener("submit", (event) =>
 
     const nombreCompania = document.getElementById("main-title").getAttribute("class");
 
-    base_de_datos_app.agregar_nueva_opcion(nombreCompania, nombre).then(() => {
+    const id = Array.from(document.querySelector(".grid-options").children).length;
+
+    base_de_datos_app.agregar_nueva_opcion(nombreCompania, nombre, id).then(() => {
         ocultar_texto_de_datos_no_existentes();
         let nuevaOpcion = document.createElement("div");
         nuevaOpcion.className = "option-tile recharge-tile";
@@ -345,6 +349,8 @@ document.getElementById("form-add-recharge").addEventListener("submit", (event) 
     const desc = document.getElementById("input-recharge-desc").value.trim();
     const precio = parseFloat(document.getElementById("input-recharge-price").value);
     const ussd = document.getElementById("input-recharge-ussd").value.trim();
+    const id = Array.from(document.querySelector(".grid-options").children).length;
+    
     if (!desc || isNaN(precio) || !ussd) return;
 
     const patron_de_busqueda = /^(?=.*\d)(?=.*--PIN--)(?=.*--TELEFONO--)(\*(\d+|--PIN--|--TELEFONO--))+#$/;
@@ -363,7 +369,7 @@ document.getElementById("form-add-recharge").addEventListener("submit", (event) 
         const indice = compania.opciones.findIndex(op => op.nombre === nombreOpcion);
         if (indice === -1) return;
 
-        const nuevaRecarga = { descripcion: desc, precio, ussd };
+        const nuevaRecarga = { id: id, descripcion: desc, precio, ussd };
         return base_de_datos_app.agregar_nueva_recarga(nombreCompania, indice, nuevaRecarga);
     }).then(() => {
         // Re-renderizar las recargas
