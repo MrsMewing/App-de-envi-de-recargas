@@ -63,6 +63,7 @@ export async function renderizar_seccion_principal(base_de_datos_app) {
         const deleteBtn = document.createElement("button");
         deleteBtn.className = "delete-btn";
         deleteBtn.innerText = "×";
+        deleteBtn.id = compañia.id;
         opcion.appendChild(deleteBtn);
 
         contenedor_de_opciones_principales.appendChild(opcion);
@@ -88,6 +89,7 @@ export async function renderizar_opciones_de_compañia( base_de_datos_app, nombr
     const deleteBtn = document.createElement("button");
     deleteBtn.className = "delete-btn";
     deleteBtn.innerText = "×";
+    deleteBtn.id = informacion_de_opcion_de_compañia.id;
     nueva_opcion.appendChild(deleteBtn);
 
     document.querySelector(".grid-options").appendChild(nueva_opcion);
@@ -122,6 +124,7 @@ export async function renderizar_recargas_de_opciones(base_de_datos, nombre_de_c
         const deleteBtn = document.createElement("button");
         deleteBtn.className = "delete-btn";
         deleteBtn.innerText = "×";
+        deleteBtn.id = recarga.id;
         div_opcion.appendChild(deleteBtn);
 
         contenedor_de_recargas.appendChild(div_opcion);

@@ -307,6 +307,7 @@ document.getElementById("form-add-company").addEventListener("submit", (event) =
         const deleteBtn = document.createElement("button");
         deleteBtn.className = "delete-btn";
         deleteBtn.innerText = "×";
+        deleteBtn.id = id;
         opcion.appendChild(deleteBtn);
 
         contenedor.appendChild(opcion);
@@ -335,6 +336,7 @@ document.getElementById("form-add-option").addEventListener("submit", (event) =>
         const deleteBtn = document.createElement("button");
         deleteBtn.className = "delete-btn";
         deleteBtn.innerText = "×";
+        deleteBtn.id = id;
         nuevaOpcion.appendChild(deleteBtn);
 
         document.querySelector(".grid-options").appendChild(nuevaOpcion);
@@ -350,7 +352,7 @@ document.getElementById("form-add-recharge").addEventListener("submit", (event) 
     const precio = parseFloat(document.getElementById("input-recharge-price").value);
     const ussd = document.getElementById("input-recharge-ussd").value.trim();
     const id = Array.from(document.querySelector(".grid-options").children).length;
-    
+
     if (!desc || isNaN(precio) || !ussd) return;
 
     const patron_de_busqueda = /^(?=.*\d)(?=.*--PIN--)(?=.*--TELEFONO--)(\*(\d+|--PIN--|--TELEFONO--))+#$/;
