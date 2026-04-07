@@ -105,4 +105,44 @@ export class BASE_DE_DATOS {
 
         return [respuesta_de_actualizacion_de_opcion, null];
     }
+
+    async eliminar_compañia(nombre_compañia) {
+        const almacen = this.iniciar_transaccion(["recargas"], "recargas");
+
+        const respuesta = await this.procesar_solicitud_db(almacen.delete(nombre_compañia));
+
+        return respuesta;
+    }
+
+    async eliminar_opcion(nombre_compañia, id_opcion) {
+        const almacen = this.iniciar_transaccion(["recargas"], "recargas");
+
+        const respuesta_obtencion = await this.procesar_solicitud_db(almacen.get(nombre_compañia));
+
+        const compañia = respuesta_obtencion.target.result;
+
+        compañia.opciones = compañia.opciones.filter(opcion => opcion.id != id_opcion);
+
+        const respuesta_actualizacion = await this.procesar_solicitud_db(almacen.put(compañia));
+
+        return respuesta_actualizacion;
+    }
+
+    async eliminar_recarga(nombre_compañia, nombre_opcion, id_recarga) {
+        const almacen = this.iniciar_transaccion(["recargas"], "recargas");
+
+        const respuesta_obtencion = await this.procesar_solicitud_db(almacen.get(nombre_compañia));
+
+        const compañia = respuesta_obtencion.target.result;
+
+        const opcion = compañia.opciones.find(op => op.nombre == nombre_opcion);
+
+        if (opcion) {
+            opcion.recargas = opcion.recargas.filter(recarga => recarga.id != id_recarga);
+        }
+
+        const respuesta_actualizacion = await this.procesar_solicitud_db(almacen.put(compañia));
+
+        return respuesta_actualizacion;
+    }
 }

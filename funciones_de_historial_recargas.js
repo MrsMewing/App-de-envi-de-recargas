@@ -52,3 +52,21 @@ export function obtener_coleccion_completa_db(){
         }
     })
 }
+
+export function eliminar_elemento_en_db(id){
+    return new Promise((resolve, reject) => {
+        const solicitud_de_apertura_de_db = indexedDB.open("historial_recargas", 1);
+
+        solicitud_de_apertura_de_db.onsuccess = function (event) {
+            const base_de_datos_recargas = event.target.result;
+
+            const transaccion = base_de_datos_recargas.transaction("recargas", "readwrite");
+            const almacen = transaccion.objectStore("recargas");
+
+            almacen.delete(id);
+
+            transaccion.oncomplete = function () { resolve(true) }
+            transaccion.onerror = function () { reject(false) }
+        }
+    })
+}

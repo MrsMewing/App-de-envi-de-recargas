@@ -1,5 +1,6 @@
 import { BASE_DE_DATOS } from "./base_de_datos.js";
-import { insertar_elementos_en_db, obtener_coleccion_completa_db } from "./funciones_de_historial_recargas.js";
+import { eliminacion_de_elemento } from "./funciones_db.js";
+import { insertar_elementos_en_db, obtener_coleccion_completa_db, eliminar_elemento_en_db } from "./funciones_de_historial_recargas.js";
 import { iniciar_animacion_de_espera, detener_animacion_de_espera } from "./manejo_de_animacion_de_espera.js";
 import { renderizar_seccion_principal, renderizar_opciones_de_compañia, updateFloatingButton, mostrar_texto_de_datos_no_existentes, renderizar_recargas_de_opciones} from "./renderizado_de_secciones.js";
 
@@ -9,6 +10,11 @@ const base_de_datos_app = new BASE_DE_DATOS("db_recaragas", 25);
 
 let compañia_actual_seleccionada = null;
 let opcion_actual_seleccionada = null;
+
+let elementoAEliminar = null;
+let tipoElemento = null;
+let idElemento = null;
+let nombreElemento = null;
 
 function ocultar_texto_de_datos_no_existentes (){
     const texto_principal_de_datos_nulos = document.getElementById("texto-de-datos-no-existentes");
@@ -96,6 +102,33 @@ function cerrarModalAddRecharge() {
     document.getElementById("input-recharge-desc").value = "";
     document.getElementById("input-recharge-price").value = "";
     document.getElementById("input-recharge-ussd").value = "";
+}
+
+function abrirModalConfirmDelete(tipo, nombre, id, elemento) {
+    tipoElemento = tipo;
+    nombreElemento = nombre;
+    idElemento = id;
+    elementoAEliminar = elemento;
+
+    let mensaje = "";
+    if (tipo === 'compañia') {
+        mensaje = `¿Estás seguro de que quieres eliminar la compañía "${nombre}"? Esta acción eliminará todas las opciones y recargas asociadas y no se puede deshacer.`;
+    } else if (tipo === 'opcion') {
+        mensaje = `¿Estás seguro de que quieres eliminar la opción "${nombre}"? Esta acción eliminará todas las recargas asociadas y no se puede deshacer.`;
+    } else if (tipo === 'recarga') {
+        mensaje = `¿Estás seguro de que quieres eliminar la recarga "${nombre}"? Esta acción no se puede deshacer.`;
+    }
+
+    document.getElementById('delete-modal-message').innerText = mensaje;
+    document.getElementById('modal-confirm-delete').style.display = 'flex';
+}
+
+function cerrarModalConfirmDelete() {
+    document.getElementById('modal-confirm-delete').style.display = 'none';
+    elementoAEliminar = null;
+    tipoElemento = null;
+    idElemento = null;
+    nombreElemento = null;
 }
 
 function valida_formulario_recarga() {
@@ -387,6 +420,24 @@ document.querySelector(".grid-options").addEventListener("click", function(activ
     const contenedor_actual_de_opciones = document.querySelector(".grid-options");
     const elemento_clickeado = activador_de_evento.target;
 
+    if(elemento_clickeado.tagName == "BUTTON" && elemento_clickeado.getAttribute("class") == "delete-btn"){
+        const id = elemento_clickeado.id
+        const contenedor = document.querySelector(".grid-options").getAttribute("id");
+        const elemento = elemento_clickeado.parentNode;
+
+        if (contenedor === 'main-options') {
+            const nombre = elemento.querySelector('p').innerText;
+            abrirModalConfirmDelete('compañia', nombre, id, elemento);
+        } else if (contenedor === 'opciones-recargas') {
+            const nombre = elemento.querySelector('p').innerText;
+            abrirModalConfirmDelete('opcion', nombre, id, elemento);
+        } else if (contenedor === 'menu-de-recargas') {
+            const nombre = elemento.querySelector('p').innerText;
+            abrirModalConfirmDelete('recarga', nombre, id, elemento);
+        }
+
+        return; 
+    }
     //verifica si actualmente el cotenedor esta mostrando las opciones principales
     if (contenedor_actual_de_opciones.getAttribute("id") == "main-options"){
 
@@ -443,3 +494,36 @@ document.getElementById("btn-retroceder").addEventListener("click", function(){
         console.log(opcion_actual_seleccionada);
     }
 });
+
+document.getElementById('confirm-delete').addEventListener('click', function() {
+    if (tipoElemento === 'compañia') {
+        base_de_datos_app.eliminar_compañia(nombreElemento).then(() => {
+            elementoAEliminar.remove();
+            if (document.querySelector(".grid-options").children.length === 0) {
+                mostrar_texto_de_datos_no_existentes();
+            }
+            cerrarModalConfirmDelete();
+        }).catch(console.log);
+    } else if (tipoElemento === 'opcion') {
+        const nombre_compañia = compañia_actual_seleccionada;
+        base_de_datos_app.eliminar_opcion(nombre_compañia, idElemento).then(() => {
+            elementoAEliminar.remove();
+            if (document.querySelector(".grid-options").children.length === 0) {
+                mostrar_texto_de_datos_no_existentes("No hay opciones aun, puedes agregar algunas");
+            }
+            cerrarModalConfirmDelete();
+        }).catch(console.log);
+    } else if (tipoElemento === 'recarga') {
+        const nombre_compañia = compañia_actual_seleccionada;
+        const nombre_opcion = opcion_actual_seleccionada;
+        base_de_datos_app.eliminar_recarga(nombre_compañia, nombre_opcion, idElemento).then(() => {
+            elementoAEliminar.remove();
+            if (document.querySelector(".grid-options").children.length === 0) {
+                mostrar_texto_de_datos_no_existentes("No hay recargas guardadas, puedes agregar algunas");
+            }
+            cerrarModalConfirmDelete();
+        }).catch(console.log);
+    }
+});
+
+document.getElementById('cancel-delete').addEventListener('click', cerrarModalConfirmDelete);
